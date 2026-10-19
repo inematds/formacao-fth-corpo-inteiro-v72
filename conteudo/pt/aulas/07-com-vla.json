@@ -1,0 +1,283 @@
+{
+  "slug": "com-vla",
+  "num": 7,
+  "menu": "VLA",
+  "titulo": "Quando um VLA manda no corpo inteiro",
+  "titulo_curto": "VLA sobre o corpo inteiro",
+  "minutos": 15,
+  "lead": "Um VLA vê a cena, entende o pedido e propõe uma ação, poucas vezes por segundo. Quem transforma essa proposta em movimento seguro de 29 juntas, sem cair, é o controle de corpo inteiro. Nesta aula você manda comandos de alto nível para um controle simulado no G1 e vê o que ele executa e o que ele recusa antes de mexer em qualquer junta.",
+  "objetivo": "mandar comandos de alto nível a um controle de corpo inteiro simulado e ver quais ele executa e quais recusa.",
+  "competencias": [
+    "ligar-vla-ao-controle-de-corpo-inteiro",
+    "validar-comandos-antes-de-executar",
+    "separar-o-que-do-como"
+  ],
+  "aprende": [
+    {
+      "icone": "cerebro",
+      "t": "O que o VLA entrega para baixo: alvos, tokens ou ações"
+    },
+    {
+      "icone": "camadas",
+      "t": "WBC desacoplado: pernas por RL, braços por IK"
+    },
+    {
+      "icone": "escudo",
+      "t": "A camada de baixo confere antes de executar"
+    },
+    {
+      "icone": "seta",
+      "t": "O fluxo VLA ponta a ponta no G1 (GR00T N1.7 + SONIC)"
+    }
+  ],
+  "hero_alt": "Robô humanoide de visor escuro colocando com cuidado uma caneca numa bancada, com um monitor desfocado em primeiro plano.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Do pedido ao movimento",
+      "sub": "Clique em cada bloco.",
+      "nos": [
+        {
+          "icone": "cerebro",
+          "titulo": "VLA",
+          "sub": "S2 + S1",
+          "itens": [
+            {
+              "icone": "chat",
+              "t": "\"ponha a caneca na prateleira\""
+            }
+          ],
+          "detalhe": "Vê a câmera, lê o pedido e gera a ação. No Helix 02 o S1 emite alvos de junta a 200 Hz; no GR00T N1.7 o S2 é um VLM de raciocínio e o S1 um modelo de difusão. Como funcionam por dentro é assunto do curso vla-v72."
+        },
+        {
+          "icone": "enviar",
+          "titulo": "Interface",
+          "sub": "o contrato",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "lista",
+              "t": "alvos de mão, tokens, juntas"
+            }
+          ],
+          "detalhe": "O que passa de cima para baixo. No SONIC é um espaço de tokens único (64 dimensões) que aceita VR, vídeo humano e VLA. No kit é um JSON com ações nomeadas (alcançar, girar o tronco, voltar)."
+        },
+        {
+          "icone": "escudo",
+          "titulo": "Conferir",
+          "sub": "antes de mexer",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "fora do alcance, fora do limite"
+            }
+          ],
+          "detalhe": "A camada de baixo não executa às cegas: ação conhecida? junta dentro do limite? alvo ao alcance do braço? O que não passa é recusado com o motivo, e o robô fica como estava."
+        },
+        {
+          "icone": "camadas",
+          "titulo": "WBC",
+          "sub": "pernas + braços",
+          "itens": [
+            {
+              "icone": "robo",
+              "t": "pernas RL, braços IK"
+            }
+          ],
+          "detalhe": "Desacoplado como no GR00T-WholeBodyControl (usado sob o GR00T N1.5/N1.6): pernas por uma política de RL, braços por IK. No kit, as pernas seguram a pose do modelo por PD; é o lugar onde entraria a política."
+        },
+        {
+          "icone": "chip",
+          "titulo": "PD",
+          "sub": "500 Hz",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "executado, robô de pé"
+            }
+          ],
+          "detalhe": "O mesmo S0 das aulas anteriores. O comando só conta como executado se a mão chegou ao alvo e o robô continua de pé."
+        }
+      ],
+      "estilo": "escada",
+      "legenda": "O VLA propõe; o controle de corpo inteiro confere e executa. A segurança não pode depender só do modelo de cima."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Como isso está montado em 2026",
+      "sub": "Clique em cada caso. Fatos com fonte; detalhes do VLA no vla-v72.",
+      "passos": [
+        {
+          "titulo": "Figure",
+          "sub": "Helix 02",
+          "texto": [
+            "Três camadas: S2 lento, S1 emitindo alvos de junta a 200 Hz e S0 aprendido a 1 kHz, que substituiu 109.504 linhas de C++ (27/01/2026).",
+            "O S0 foi treinado com mais de 1.000 h de movimento humano retargeted e RL sim-to-real: as aulas 2 a 4 deste curso em escala industrial."
+          ]
+        },
+        {
+          "titulo": "NVIDIA",
+          "sub": "N1.7 + SONIC",
+          "texto": [
+            "Em 07/05/2026 o repositório GR00T-WholeBodyControl publicou o fluxo VLA ponta a ponta no G1: coletar dados por teleoperação, ajustar o GR00T N1.7 e implantar com o SONIC como controle de corpo inteiro.",
+            "O SONIC v1.1 (23/07/2026) foi treinado com aumento de pose de punho justamente para teleop e para VLAs que usam esse controle."
+          ]
+        },
+        {
+          "titulo": "Desacoplado",
+          "sub": "N1.5/N1.6",
+          "texto": [
+            "Antes do SONIC, o GR00T N1.5 e o N1.6 rodavam sobre o WBC desacoplado: RL nas pernas, IK nos braços. É a divisão que o kit imita.",
+            "Vantagem: simples e previsível. Limite: o tronco e as pernas não ajudam o braço a alcançar mais longe."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Quatro comandos de alto nível",
+      "sub": "O arquivo de comandos faz o papel da saída de um VLA. O comando_wbc.py confere cada um, executa em 1 s (rampa + correção em malha fechada a 50 Hz) e diz se a mão chegou.",
+      "blocos": [
+        {
+          "rot": "Terminal · executar comandos",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/comando_wbc.py; echo \"saída: $?\""
+        },
+        {
+          "rot": "Arquivo · kit/comandos.json",
+          "icone": "arquivo",
+          "conteudo": "{\n  \"descricao\": \"Saída de alto nível, como a de um VLA a poucos Hz: o QUÊ fazer. Alvos da mão em metros, relativos à pelve (x para a frente, y para a esquerda, z para cima).\",\n  \"comandos\": [\n    {\"acao\": \"alcancar\", \"mao\": \"direita\", \"alvo_m\": [0.30, -0.20, 0.15]},\n    {\"acao\": \"girar_tronco\", \"graus\": 20},\n    {\"acao\": \"alcancar\", \"mao\": \"esquerda\", \"alvo_m\": [0.30, 0.25, 0.20]},\n    {\"acao\": \"voltar\"}\n  ]\n}"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>comando 1 · alcancar direita (0.3, -0.2, 0.15) → executado: sim (mão a 1.1 cm do alvo)\ncomando 2 · girar_tronco 20° → executado: sim\ncomando 3 · alcancar esquerda (0.3, 0.25, 0.2) → executado: sim (mão a 1.0 cm do alvo)\ncomando 4 · voltar → executado: sim\nrobô de pé: sim · pelve a 0.79 m\nexecutado: sim\nsaída: 0</pre><p>Quatro comandos, quatro execuções, mão a cerca de 1 cm de cada alvo e o robô de pé no fim.</p>"
+          },
+          {
+            "rot": "Erro comum: comando impossível",
+            "html": "<pre>comando 1 · alcancar direita (0.9, -0.2, 0.15) → recusado: alvo a 0.92 m do ombro; o braço alcança 0.38 m\ncomando 2 · girar_tronco 200° → recusado: fora do limite da cintura (-150° a 150°)\ncomando 3 · pular → recusado: ação desconhecida (conheço alcancar, girar_tronco, voltar)\nrobô de pé: sim · pelve a 0.79 m\nexecutado: não · 3 comando(s) recusado(s)\nsaída: 1</pre><p>Alvo a 92 cm do ombro (o braço alcança 38 cm até o punho), cintura a 200° (o limite é 150°) e uma ação que não existe: os três são recusados antes de qualquer movimento, e o robô continua parado e de pé.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Executar, recusar, escrever o seu.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Comandos do kit",
+          "min": "5 min",
+          "texto": "Rode os quatro comandos do kit.",
+          "pronto": "<code>python3 kit/comando_wbc.py; echo \"saída: $?\"</code> → <code>executado: sim</code> e <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Comandos ruins",
+          "min": "5 min",
+          "texto": "Rode o arquivo de comandos ruins e leia o motivo de cada recusa.",
+          "pronto": "<code>python3 kit/comando_wbc.py --comandos kit/comandos-ruins.json | tail -1</code> → <code>executado: não · 3 comando(s) recusado(s)</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · A sua sequência",
+          "min": "10 min",
+          "texto": "Escreva ~/fth/movimentos/meus-comandos.json com cinco comandos (as duas mãos, um giro de tronco e voltar) e rode. Se algum for recusado, o motivo diz a distância até o ombro: o braço alcança 0,38 m até o punho.",
+          "pronto": "<code>python3 kit/comando_wbc.py --comandos ~/fth/movimentos/meus-comandos.json | tail -1</code> → <code>executado: sim</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "O VLA manda alcançar um ponto a 92 cm do ombro. O que a camada de baixo deve fazer?",
+          "opcoes": [
+            "Tentar mesmo assim, esticando o braço até o limite das juntas.",
+            "Andar até o ponto por conta própria, sem avisar a camada de cima.",
+            "Repassar o comando para o PD, que resolve o alcance sozinho.",
+            "Recusar antes de mexer, com o motivo, e devolver para a camada de cima."
+          ],
+          "certa": 3,
+          "explica": "Conferir antes de executar é o que impede um comando ruim de virar movimento. O VLA pode errar; o controle de baixo é a última barreira antes das juntas.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "No WBC desacoplado, quem cuida das pernas?",
+          "opcoes": [
+            "Uma política de RL que anda e equilibra.",
+            "A IK dos braços, estendida até os pés.",
+            "O VLA, diretamente, a 200 Hz.",
+            "Ninguém: as pernas ficam travadas durante a tarefa."
+          ],
+          "certa": 0,
+          "explica": "RL nas pernas, IK nos braços. No kit, as pernas seguram a pose do modelo por PD, no lugar onde entraria a política.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "O que o fluxo de 07/05/2026 do GR00T-WholeBodyControl junta?",
+          "opcoes": [
+            "Isaac Lab 2.1.0 e BeyondMimic para treinar o VLA.",
+            "Teleop para coletar dados, ajuste do N1.7 e o SONIC como controle.",
+            "GMR e LAFAN1 para gerar o VLA a partir de animação.",
+            "Um VLA que dispensa o controle de corpo inteiro no G1 e manda direto nas juntas."
+          ],
+          "certa": 1,
+          "explica": "Coleta por teleop (aula 5), ajuste do VLA (curso vla-v72) e o SONIC por baixo (aula 4): as camadas deste curso ligadas.",
+          "ref": "passos"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "O quê × como",
+          "texto": "O VLA diz o quê; o controle de corpo inteiro decide o como."
+        },
+        {
+          "t": "Contrato",
+          "texto": "A interface (alvos, tokens) é o que liga um ao outro."
+        },
+        {
+          "t": "Conferir",
+          "texto": "A camada de baixo recusa o que não dá para fazer, antes de mexer."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "VLA v7.2: o curso inteiro sobre o modelo de cima",
+          "href": "https://inematds.github.io/vla-v72/",
+          "icone": "cerebro"
+        },
+        {
+          "t": "VLA v7.2, aula 7: a fronteira (RL depois da imitação)",
+          "href": "https://inematds.github.io/vla-v72/aulas/fronteira/",
+          "icone": "cerebro"
+        },
+        {
+          "t": "GR00T-WholeBodyControl: fluxo VLA no G1",
+          "href": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+          "icone": "git"
+        },
+        {
+          "t": "Helix 02 (Figure)",
+          "href": "https://www.figure.ai/news/helix-02",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

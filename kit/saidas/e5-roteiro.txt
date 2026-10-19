@@ -1,0 +1,2 @@
+ERRO no roteiro: mão 'esquerdo' (use direita ou esquerda)
+saída: 1

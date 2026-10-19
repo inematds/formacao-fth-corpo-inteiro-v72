@@ -1,0 +1,285 @@
+{
+  "slug": "tracking",
+  "num": 4,
+  "menu": "Rastreio",
+  "titulo": "Uma política que imita qualquer movimento",
+  "titulo_curto": "Rastreio de movimento",
+  "minutos": 15,
+  "lead": "Ter o movimento no formato do robô não é fazer o robô executá-lo. Se você só mandar os ângulos para os motores, ele imita por um segundo e cai: ninguém está cuidando do equilíbrio. Nesta aula você reproduz o boxe no MuJoCo com a pelve presa a um pórtico e sem ele, mede o erro de cada junta e vê o que BeyondMimic, GMT e SONIC resolvem.",
+  "objetivo": "reproduzir o movimento no MuJoCo com e sem pórtico e explicar por que é preciso uma política de rastreio.",
+  "competencias": [
+    "reproduzir-movimento-em-simulacao",
+    "medir-erro-de-rastreio",
+    "explicar-politica-de-rastreio"
+  ],
+  "aprende": [
+    {
+      "icone": "play",
+      "t": "Reproduzir uma referência com o PD das juntas"
+    },
+    {
+      "icone": "grafico",
+      "t": "Erro de rastreio em graus, por junta"
+    },
+    {
+      "icone": "robo",
+      "t": "Por que seguir ângulos não equilibra o robô"
+    },
+    {
+      "icone": "cerebro",
+      "t": "BeyondMimic (hoje no mjlab), GMT e SONIC: o que cada um faz"
+    }
+  ],
+  "hero_alt": "Robô humanoide de visor escuro em guarda de boxe num laboratório, com um punho em leve borrão de movimento e um cabo de segurança acima.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Da referência ao robô de pé",
+      "sub": "Clique em cada bloco.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Referência",
+          "sub": "qpos por quadro",
+          "itens": [
+            {
+              "icone": "relogio",
+              "t": "120 Hz, interpolada"
+            }
+          ],
+          "detalhe": "O movimento retargeted da aula 3: 1200 quadros a 120 Hz. A simulação roda a 500 Hz, então o kit interpola a referência entre quadros (ângulos em linha reta; quatérnio normalizado)."
+        },
+        {
+          "icone": "cerebro",
+          "titulo": "Política",
+          "sub": "rastreio aprendido",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "camadas",
+              "t": "observa o estado e a referência futura"
+            }
+          ],
+          "detalhe": "O que falta no kit: uma rede treinada com PPO em milhares de simulações que olha o estado do robô e os próximos quadros da referência e decide os alvos de junta que mantêm o equilíbrio. O SONIC olha 10 quadros futuros a 20 ms (cerca de 200 ms) no checkpoint padrão."
+        },
+        {
+          "icone": "chip",
+          "titulo": "PD",
+          "sub": "500 Hz",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "kp=500 no G1 do Menagerie"
+            }
+          ],
+          "detalhe": "Cada atuador de posição do G1 puxa a junta para o ângulo pedido. No kit, o ângulo pedido é a própria referência: isso é \"replay\", não rastreio."
+        },
+        {
+          "icone": "robo",
+          "titulo": "Física",
+          "sub": "contato, gravidade",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "sem pórtico, cai"
+            }
+          ],
+          "detalhe": "Com a pelve presa num pórtico virtual que segue a referência, as juntas acompanham com erro pequeno. Solto, o corpo responde à gravidade e ao contato dos pés, e o replay não corrige nada."
+        }
+      ],
+      "legenda": "Pórtico virtual = a base é recolocada na pose da referência a cada passo, como um robô suspenso no primeiro teste."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Quem resolve o rastreio em 2026",
+      "sub": "Clique em cada um. Todos treinam em GPU; aqui são mostrados, não rodados.",
+      "passos": [
+        {
+          "titulo": "BeyondMimic",
+          "sub": "hoje no mjlab",
+          "texto": [
+            "Rastreia movimentos dinâmicos (giro, corrida, estrela) e usa uma política de difusão guiada para tarefas sem treino específico (arXiv 2508.08241, ago/2025). O repositório whole_body_tracking fixa o Isaac Lab 2.1.0.",
+            "Em 15/10/2026 o README desse repositório diz que ele foi aposentado: o rastreio do BeyondMimic continua no mjlab, na tarefa Mjlab-Tracking-Flat-Unitree-G1."
+          ]
+        },
+        {
+          "titulo": "GMT",
+          "sub": "relatado",
+          "texto": [
+            "Rastreio geral com amostragem adaptativa (movimentos fáceis × difíceis) e uma camada de mistura de especialistas (arXiv 2506.14770, jun/2025). Relatado pela pesquisa da formação a partir do resumo do artigo."
+          ]
+        },
+        {
+          "titulo": "SONIC",
+          "sub": "pesos abertos",
+          "texto": [
+            "Da NVIDIA: 42M parâmetros, treinado com mais de 100M de quadros (cerca de 700 h). Tem três checkpoints públicos para o G1 (original, baixa latência e v1.1 de 23/07/2026), tokens de 64 dimensões e controlador a 50 Hz.",
+            "Implantação em C++ e TensorRT; código Apache-2.0, pesos sob a NVIDIA Open Model License (uso comercial com atribuição)."
+          ],
+          "exemplo": {
+            "rot": "Formato",
+            "texto": "O GMR exporta CSV para o BeyondMimic, cujo pipeline de imitação o mjlab adotou. O seu .npz da aula 3 é o mesmo dado num formato próprio do kit."
+          }
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Replay com a pelve no pórtico",
+      "sub": "As juntas recebem a referência a cada passo de 2 ms; a base é recolocada na pose da referência. O erro é a diferença entre o ângulo medido e o da referência no passo seguinte.",
+      "blocos": [
+        {
+          "rot": "Terminal · com pórtico",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/reproduzir.py $F/movimentos/boxe_g1.npz; echo \"saída: $?\""
+        },
+        {
+          "rot": "Trecho · kit/reproduzir.py",
+          "icone": "arquivo",
+          "conteudo": "        if a.modo == \"portico\":\n            fth.portico(d, r[:7])\n        d.ctrl[mot] = r[adr]\n        mujoco.mj_step(m, d)"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>movimento: boxe_g1.npz · 1200 quadros a 120 Hz · 10.0 s · modo portico\npassos de física: 4995 (2 ms cada)\nerro médio de junta: 0.3° · pior junta: right_shoulder_roll_joint (1.9°)\nqueda: não\nsaída: 0</pre><p>Erro médio de 0,3°: com o corpo sustentado, o PD dá conta. O ombro direito, que mais se mexe no boxe, é o pior.</p>"
+          },
+          {
+            "rot": "Sem o pórtico",
+            "html": "<pre>movimento: boxe_g1.npz · 1200 quadros a 120 Hz · 10.0 s · modo livre\npassos de física: 839 (2 ms cada)\nerro médio de junta: 0.5° · pior junta: right_shoulder_roll_joint (2.8°)\nqueda: sim, em t = 1.68 s\nsaída: 0</pre><p>O mesmo replay, solto: cai em 1,68 s com erro de junta ainda pequeno. Seguir os ângulos não é equilibrar. É isso que a política de rastreio aprende.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "O que se usa em escala (mostrado)",
+      "sub": "Comando do README do mjlab (commit 8bb2bc9, 18/10/2026). Pede GPU NVIDIA e uma conta no WandB para o registro dos movimentos; não foi rodado aqui e não é pré-requisito do curso.",
+      "blocos": [
+        {
+          "rot": "Mostrado · mjlab, rastreio de movimento no G1 (não rodado aqui)",
+          "icone": "nuvem",
+          "conteudo": "# github.com/mujocolab/mjlab · README (commit 8bb2bc9, 18/10/2026)\nuv run train Mjlab-Tracking-Flat-Unitree-G1 --registry-name your-org/motions/motion-name --env.scene.num-envs 4096\nuv run play Mjlab-Tracking-Flat-Unitree-G1 --wandb-run-path your-org/mjlab/run-id"
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Medir com e sem pórtico.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Com pórtico",
+          "min": "5 min",
+          "texto": "Rode o replay do boxe com a pelve no pórtico.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_g1.npz | tail -2</code> → <code>erro médio de junta: 0.3°</code> e <code>queda: não</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Sem pórtico",
+          "min": "5 min",
+          "texto": "Rode com --modo livre e anote o instante da queda.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_g1.npz --modo livre | tail -1</code> → <code>queda: sim, em t = 1.68 s</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · O segundo trecho",
+          "min": "5 min",
+          "texto": "Se você fez o E3 da aula 3, reproduza boxe_trecho2.npz com pórtico e compare o erro médio e a pior junta.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_trecho2.npz | grep erro</code> → <code>erro médio de junta: 1.5°</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "Sem pórtico, o erro de junta é pequeno e mesmo assim o G1 cai. Por quê?",
+          "opcoes": [
+            "Porque o PD do G1 é fraco demais para seguir o boxe.",
+            "Porque a referência tem violações de limite nas pernas em vários quadros do boxe.",
+            "Porque o MuJoCo não simula o contato dos pés com o chão.",
+            "Porque ninguém está decidindo os ângulos que mantêm o equilíbrio."
+          ],
+          "certa": 3,
+          "explica": "O replay segue os ângulos de um humano, não as forças que mantêm o G1 de pé. A política de rastreio aprende a desviar um pouco da referência para não cair.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "Onde está hoje o rastreio do BeyondMimic, segundo o README do repositório original?",
+          "opcoes": [
+            "No mjlab, na tarefa Mjlab-Tracking-Flat-Unitree-G1.",
+            "Num pacote do PyPI chamado beyondmimic, que substituiu o repositório.",
+            "No GMR, que passou a treinar políticas de rastreio.",
+            "No repositório whole_body_tracking, mantido com o Isaac Lab 3.0."
+          ],
+          "certa": 0,
+          "explica": "O whole_body_tracking (que fixa o Isaac Lab 2.1.0) foi aposentado; o README aponta para a tarefa de tracking do mjlab (15/10/2026). O GMR faz só o retargeting.",
+          "ref": "passos"
+        },
+        {
+          "p": "O que o pórtico virtual do kit faz?",
+          "opcoes": [
+            "Desliga a gravidade da simulação durante o replay.",
+            "Recoloca a base do robô na pose da referência a cada passo.",
+            "Prende os pés do robô no chão com uma solda.",
+            "Aumenta o kp dos motores até o robô ficar rígido."
+          ],
+          "certa": 1,
+          "explica": "É o equivalente simulado do robô suspenso: o corpo é sustentado, e você mede só se as juntas acompanham. No curso 4 da FTH o pórtico real aparece no procedimento de primeiro teste.",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "Replay",
+          "texto": "Seguir os ângulos funciona com o corpo sustentado e falha solto."
+        },
+        {
+          "t": "Política",
+          "texto": "A política de rastreio olha o estado e a referência futura e cuida do equilíbrio."
+        },
+        {
+          "t": "Onde treinar",
+          "texto": "mjlab (com o pipeline do BeyondMimic) ou SONIC pronto, em GPU."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "mjlab: tarefa de rastreio de movimento",
+          "href": "https://github.com/mujocolab/mjlab",
+          "icone": "git"
+        },
+        {
+          "t": "BeyondMimic: whole_body_tracking (aposentado)",
+          "href": "https://github.com/HybridRobotics/whole_body_tracking",
+          "icone": "git"
+        },
+        {
+          "t": "SONIC: pesos e cartão do modelo",
+          "href": "https://huggingface.co/nvidia/GEAR-SONIC",
+          "icone": "cerebro"
+        },
+        {
+          "t": "FTH 2: do simulador ao chão (sim2sim e escada)",
+          "href": "https://inematds.github.io/formacao-fth-sim2real-v72/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

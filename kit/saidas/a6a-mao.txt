@@ -1,0 +1,10 @@
+modelo: unitree_g1/scene_with_hands.xml · nu=43
+mão left: 7 GDL (polegar 3, indicador 2, médio 2)
+mão right: 7 GDL (polegar 3, indicador 2, médio 2)
+torque declarado por junta da mão: 1.40 a 2.45 N·m (actuatorfrcrange)
+aperto simulado num cilindro fixo de 4 cm (mão direita, 2 s):
+  polegar  :  18.6 N
+  indicador:  53.0 N
+  médio    :  81.4 N
+dedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô
+saída: 0

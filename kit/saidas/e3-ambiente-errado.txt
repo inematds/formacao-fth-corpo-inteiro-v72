@@ -1,0 +1,2 @@
+ERRO: o GMR não está neste ambiente (No module named 'general_motion_retargeting'). Ative ~/fth/.venv-gmr (aula 3).
+saída: 2

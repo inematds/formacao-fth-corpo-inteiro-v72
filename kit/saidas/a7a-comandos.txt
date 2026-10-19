@@ -1,0 +1,7 @@
+comando 1 · alcancar direita (0.3, -0.2, 0.15) → executado: sim (mão a 1.1 cm do alvo)
+comando 2 · girar_tronco 20° → executado: sim
+comando 3 · alcancar esquerda (0.3, 0.25, 0.2) → executado: sim (mão a 1.0 cm do alvo)
+comando 4 · voltar → executado: sim
+robô de pé: sim · pelve a 0.79 m
+executado: sim
+saída: 0

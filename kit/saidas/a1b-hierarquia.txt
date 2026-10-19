@@ -1,0 +1,7 @@
+simulado: 2 s · passo de física 2 ms
+S2 comando de alto nível :   10 chamadas (5 Hz)
+S1 corpo inteiro (IK)    :  100 chamadas (50 Hz)
+S0 PD de junta + física  : 1000 passos   (500 Hz)
+mão direita a 0.7 cm do último alvo · pelve a 0.79 m · de pé: sim
+3 camadas
+saída: 0

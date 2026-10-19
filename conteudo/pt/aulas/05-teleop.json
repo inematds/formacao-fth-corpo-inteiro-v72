@@ -1,0 +1,292 @@
+{
+  "slug": "teleop",
+  "num": 5,
+  "menu": "Teleop",
+  "titulo": "Teleoperação de corpo inteiro",
+  "titulo_curto": "Teleoperação de corpo inteiro",
+  "minutos": 15,
+  "lead": "Teleoperar é a forma mais rápida de um humanoide fazer uma tarefa nova e de juntar demonstrações para treinar um VLA. O operador mexe os braços num óculos de VR, o robô repete. O que estraga a experiência é o atraso. Nesta aula você teleopera os dois braços do G1 por um roteiro, mede quantos alvos a mão atinge e vê a partir de que latência tudo desanda.",
+  "objetivo": "teleoperar os dois braços do G1 por um roteiro de alvos com latência e medir quantos alvos a mão atinge.",
+  "competencias": [
+    "simular-teleoperacao",
+    "medir-efeito-da-latencia",
+    "reconhecer-limite-de-alcance"
+  ],
+  "aprende": [
+    {
+      "icone": "usuario",
+      "t": "O caminho do gesto: VR, rede, controle de corpo inteiro, junta"
+    },
+    {
+      "icone": "relogio",
+      "t": "Latência × horizonte de referência: não confundir os 80 ms do SONIC"
+    },
+    {
+      "icone": "alvo",
+      "t": "Alcance do braço: o alvo que nenhuma latência salva"
+    },
+    {
+      "icone": "video",
+      "t": "Teleop como coleta de dados para VLA (TWIST2, GR00T-WBC)"
+    }
+  ],
+  "hero_alt": "Operador de costas com óculos de realidade virtual e dois controles levantados; à frente, um robô humanoide de visor escuro repete o gesto.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "O caminho de um gesto",
+      "sub": "Clique em cada bloco.",
+      "nos": [
+        {
+          "icone": "usuario",
+          "titulo": "Operador",
+          "sub": "VR, 2 controles",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "pose das mãos e da cabeça"
+            }
+          ],
+          "detalhe": "O óculos de VR mede a pose da cabeça e das mãos do operador. O TWIST2 usou um PICO 4U e um pescoço de 2 GDL de cerca de US$ 250 no robô, e relatou 100 demonstrações em 15 min (relatado, arXiv nov/2025)."
+        },
+        {
+          "icone": "nuvem",
+          "titulo": "Rede",
+          "sub": "latência",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "relogio",
+              "t": "sensor + rede + processamento"
+            }
+          ],
+          "detalhe": "Tudo o que acontece entre o gesto e o robô receber o alvo: leitura do sensor, rede, pré-processamento e inferência. No kit, um único número (--latencia-ms)."
+        },
+        {
+          "icone": "camadas",
+          "titulo": "Corpo inteiro",
+          "sub": "50 Hz",
+          "itens": [
+            {
+              "icone": "chip",
+              "t": "IK dos dois braços"
+            }
+          ],
+          "detalhe": "A cada 20 ms o controle refaz a IK dos dois braços a partir do estado medido, com as pernas na pose de pé. No SONIC, o mesmo papel é de uma política que recebe a pose do operador como referência."
+        },
+        {
+          "icone": "robo",
+          "titulo": "Junta",
+          "sub": "PD 500 Hz",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "mão a menos de 3 cm"
+            }
+          ],
+          "detalhe": "O PD do G1 leva cada junta ao ângulo pedido. O alvo conta como atingido quando a mão chega a menos de 3 cm dele dentro da janela de 0,6 s."
+        }
+      ],
+      "volta": "o operador vê o robô",
+      "legenda": "Teleop é laço fechado com um humano dentro: atraso grande faz o operador corrigir o que já passou."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Três coisas que a pesquisa de 2026 deixa claras",
+      "sub": "Clique em cada uma.",
+      "passos": [
+        {
+          "titulo": "80 ms",
+          "sub": "não é latência",
+          "texto": [
+            "O SONIC tem um checkpoint de \"baixa latência\" (16/06/2026) que olha 4 quadros futuros a 20 ms: cerca de 80 ms de horizonte de referência. O checkpoint padrão olha 10 quadros (cerca de 200 ms).",
+            "O próprio README avisa: esses números não são a latência total da teleoperação, que inclui sensor, rede, pré-processamento e inferência."
+          ]
+        },
+        {
+          "titulo": "VR pronto",
+          "sub": "GR00T-WBC",
+          "texto": [
+            "O repositório GR00T-WholeBodyControl traz teleop por VR com PICO, CloudXR dentro do processo via isaacteleop[cloudxr] (16/06/2026) e IsaacTeleop 1.4 com Jetson AGX Orin (14/09/2026).",
+            "Em 07/05/2026 ganhou o fluxo VLA ponta a ponta no G1: coletar por teleop, ajustar o GR00T N1.7 e implantar com o SONIC."
+          ]
+        },
+        {
+          "titulo": "Uma política",
+          "sub": "muitos comandos",
+          "texto": [
+            "O HOVER (ICRA 2025, relatado) destilou vários modos de comando (VR, mocap, exoesqueleto, joystick) numa política de cerca de 1,5M parâmetros.",
+            "O SONIC usa um espaço de tokens único para VR, vídeo humano e VLA: o mesmo controle obedece a qualquer um deles (aula 7)."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Teleoperar os dois braços por um roteiro",
+      "sub": "O roteiro kit/passos.json faz o papel do operador: seis deslocamentos de controle, alternando as mãos. O sexto, de propósito, pede 60 cm à frente.",
+      "blocos": [
+        {
+          "rot": "Terminal · teleop com 80 ms",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/teleop_sim.py --roteiro kit/passos.json; echo \"saída: $?\""
+        },
+        {
+          "rot": "Arquivo · kit/passos.json",
+          "icone": "arquivo",
+          "conteudo": "{\n  \"descricao\": \"Roteiro de teleoperação: deslocamentos do controle de cada mão (em metros, a partir da posição inicial da mão), como um operador de VR moveria. Cada alvo vale até 'janela' segundos depois de enviado.\",\n  \"tolerancia_cm\": 3,\n  \"alvos\": [\n    {\"t\": 0.2, \"mao\": \"direita\",  \"dx\": 0.20, \"dy\": 0.00, \"dz\": 0.15, \"janela\": 0.6},\n    {\"t\": 0.9, \"mao\": \"esquerda\", \"dx\": 0.20, \"dy\": 0.00, \"dz\": 0.15, \"janela\": 0.6},\n    {\"t\": 1.6, \"mao\": \"direita\",  \"dx\": 0.25, \"dy\": 0.10, \"dz\": 0.30, \"janela\": 0.6},\n    {\"t\": 2.3, \"mao\": \"esquerda\", \"dx\": 0.25, \"dy\": -0.10, \"dz\": 0.30, \"janela\": 0.6},\n    {\"t\": 3.0, \"mao\": \"direita\",  \"dx\": 0.15, \"dy\": -0.05, \"dz\": 0.05, \"janela\": 0.6},\n    {\"t\": 3.7, \"mao\": \"direita\",  \"dx\": 0.60, \"dy\": 0.00, \"dz\": 0.20, \"janela\": 0.6}\n  ]\n}"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>latência do operador ao robô: 80 ms · tolerância: 3 cm · controle a 50 Hz\nalvo 1 · t=0.2 s · mão direita  · atingido em 162 ms\nalvo 2 · t=0.9 s · mão esquerda · atingido em 160 ms\nalvo 3 · t=1.6 s · mão direita  · atingido em 174 ms\nalvo 4 · t=2.3 s · mão esquerda · atingido em 154 ms\nalvo 5 · t=3.0 s · mão direita  · atingido em 166 ms\nalvo 6 · t=3.7 s · mão direita  · não atingido (chegou a 21.7 cm)\nrobô de pé: sim\nalvos atingidos: 5/6\nsaída: 0</pre><p>Cada alvo leva cerca de 80 ms de latência + 80 ms de movimento. O 6º não é atingido com nenhuma latência: está fora do alcance do braço.</p>"
+          },
+          {
+            "rot": "Erro comum: nome da mão",
+            "html": "<pre>ERRO no roteiro: mão 'esquerdo' (use direita ou esquerda)\nsaída: 1</pre><p>O roteiro aceita só \"direita\" e \"esquerda\". Erro de digitação para antes de mexer no robô, não no meio da sessão.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "A partir de que atraso desanda",
+      "sub": "O mesmo roteiro com cinco latências. A janela de cada alvo é de 0,6 s.",
+      "blocos": [
+        {
+          "rot": "Terminal · varrer a latência",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\nfor ms in 0 80 300 450 550; do\n  echo \"$ms ms → $(python3 kit/teleop_sim.py --roteiro kit/passos.json --latencia-ms $ms | tail -1)\"\ndone"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>0 ms → alvos atingidos: 5/6\n80 ms → alvos atingidos: 5/6\n300 ms → alvos atingidos: 5/6\n450 ms → alvos atingidos: 4/6\n550 ms → alvos atingidos: 0/6</pre><p>Até 300 ms sobra janela. A 450 ms um alvo já perde a janela; a 550 ms nenhum é atingido a tempo. Num operador de verdade, o efeito aparece antes: ele começa a corrigir o atraso.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Roteiro, latência e alcance.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Roteiro padrão",
+          "min": "5 min",
+          "texto": "Rode o teleop com o roteiro do kit e 80 ms.",
+          "pronto": "<code>python3 kit/teleop_sim.py --roteiro kit/passos.json | tail -1</code> → <code>alvos atingidos: 5/6</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · 6 de 6",
+          "min": "10 min",
+          "texto": "Copie o roteiro para ~/fth/movimentos/passos-meu.json e traga o 6º alvo para dentro do alcance (dx menor que 0,3).",
+          "pronto": "<code>python3 kit/teleop_sim.py --roteiro ~/fth/movimentos/passos-meu.json | tail -1</code> → <code>alvos atingidos: 6/6</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Latência que zera",
+          "min": "5 min",
+          "texto": "Rode a varredura de latência e diga, em uma frase, por que 550 ms zera tudo com janela de 0,6 s.",
+          "pronto": "<code>python3 kit/teleop_sim.py --roteiro kit/passos.json --latencia-ms 550 | tail -1</code> → <code>alvos atingidos: 0/6</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "O checkpoint de baixa latência do SONIC tem 4 quadros a 20 ms. O que são esses 80 ms?",
+          "opcoes": [
+            "A latência total, do gesto do operador ao movimento do robô.",
+            "O tempo que o óculos de VR leva para medir a mão.",
+            "O horizonte de referência futura que o controlador observa.",
+            "O período do laço PD das juntas do G1 nesse modo."
+          ],
+          "certa": 2,
+          "explica": "É quanto da referência futura a política vê. O README diz que não é a latência ponta a ponta, que soma sensor, rede, pré-processamento e inferência.",
+          "ref": "passos",
+          "cert": true
+        },
+        {
+          "p": "O alvo 6 não é atingido nem com latência zero. O que isso indica?",
+          "opcoes": [
+            "Que o controle a 50 Hz é lento demais para esse alvo.",
+            "Que o alvo está fora do alcance do braço; latência não muda isso.",
+            "Que o roteiro está com o nome da mão errado nesse alvo.",
+            "Que o robô caiu antes do alvo 6 e parou de responder."
+          ],
+          "certa": 1,
+          "explica": "60 cm à frente da mão passa do comprimento do braço do G1. A mão chega a 21,7 cm e para: a IK faz o melhor possível dentro dos limites.",
+          "ref": "codigo"
+        },
+        {
+          "p": "Para que teleoperação de corpo inteiro serve além de operar o robô na hora?",
+          "opcoes": [
+            "Para coletar demonstrações e ajustar um VLA (GR00T N1.7 + SONIC).",
+            "Para medir a bateria do robô durante a sessão de uso.",
+            "Para calibrar a câmera de profundidade da cabeça do robô.",
+            "Para nada além disso: os dados de teleop não são reaproveitados para treino depois."
+          ],
+          "certa": 0,
+          "explica": "Teleop é a fonte de dados de tarefa: o TWIST2 relatou 100 demonstrações em 15 min, e o GR00T-WBC tem o fluxo coletar → ajustar N1.7 → implantar com SONIC.",
+          "ref": "passos"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "Caminho",
+          "texto": "Gesto, rede, controle de corpo inteiro, junta: cada etapa soma atraso."
+        },
+        {
+          "t": "Latência",
+          "texto": "Horizonte de referência não é latência ponta a ponta."
+        },
+        {
+          "t": "Dados",
+          "texto": "Teleop é como se coletam as demonstrações que treinam o VLA."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "GR00T-WholeBodyControl: teleop por VR e cartão do SONIC",
+          "href": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+          "icone": "git"
+        },
+        {
+          "t": "TWIST2 (arXiv 2511.02832)",
+          "href": "https://arxiv.org/abs/2511.02832",
+          "icone": "arquivo"
+        },
+        {
+          "t": "HOVER (arXiv 2410.21229)",
+          "href": "https://arxiv.org/abs/2410.21229",
+          "icone": "arquivo"
+        },
+        {
+          "t": "VLA v7.2, aula 4: dados de robô",
+          "href": "https://inematds.github.io/vla-v72/aulas/dados/",
+          "icone": "cerebro"
+        }
+      ]
+    }
+  ]
+}

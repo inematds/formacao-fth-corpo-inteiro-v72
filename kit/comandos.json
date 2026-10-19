@@ -1,0 +1,9 @@
+{
+  "descricao": "Saída de alto nível, como a de um VLA a poucos Hz: o QUÊ fazer. Alvos da mão em metros, relativos à pelve (x para a frente, y para a esquerda, z para cima).",
+  "comandos": [
+    {"acao": "alcancar", "mao": "direita", "alvo_m": [0.30, -0.20, 0.15]},
+    {"acao": "girar_tronco", "graus": 20},
+    {"acao": "alcancar", "mao": "esquerda", "alvo_m": [0.30, 0.25, 0.20]},
+    {"acao": "voltar"}
+  ]
+}

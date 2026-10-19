@@ -1,0 +1,12 @@
+{
+  "descricao": "Roteiro de teleoperação: deslocamentos do controle de cada mão (em metros, a partir da posição inicial da mão), como um operador de VR moveria. Cada alvo vale até 'janela' segundos depois de enviado.",
+  "tolerancia_cm": 3,
+  "alvos": [
+    {"t": 0.2, "mao": "direita",  "dx": 0.20, "dy": 0.00, "dz": 0.15, "janela": 0.6},
+    {"t": 0.9, "mao": "esquerda", "dx": 0.20, "dy": 0.00, "dz": 0.15, "janela": 0.6},
+    {"t": 1.6, "mao": "direita",  "dx": 0.25, "dy": 0.10, "dz": 0.30, "janela": 0.6},
+    {"t": 2.3, "mao": "esquerda", "dx": 0.25, "dy": -0.10, "dz": 0.30, "janela": 0.6},
+    {"t": 3.0, "mao": "direita",  "dx": 0.15, "dy": -0.05, "dz": 0.05, "janela": 0.6},
+    {"t": 3.7, "mao": "direita",  "dx": 0.60, "dy": 0.00, "dz": 0.20, "janela": 0.6}
+  ]
+}

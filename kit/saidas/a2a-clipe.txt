@@ -1,0 +1,7 @@
+GMR bb1bbe4 (2026-04-02)
+arquivo: 251021_04_boxing_120Hz_cm_3DsMax.bvh
+raiz: Hips · juntas: 23 · pontas (End Site): 5 · canais por quadro: 72
+ordem de rotação: Yrotation Xrotation Zrotation · unidade provável: cm (maior OFFSET 43.3)
+quadros: 4249 · fps: 120 · duração: 35.4 s
+linhas de movimento conferidas: 4249/4249
+saída: 0

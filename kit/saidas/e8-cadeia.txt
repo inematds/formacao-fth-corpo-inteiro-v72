@@ -1,0 +1,10 @@
+segurança: 4/4 regras
+violações de limite (Menagerie, folga 0.5°): 0
+erro médio de junta: 0.3° · pior junta: right_shoulder_roll_joint (2.7°)
+ok    · mocap (BVH lido): 4249 quadros a 120 Hz
+ok    · retargeting: 600 quadros, 0 violações de limite
+ok    · rastreio no simulador: erro médio 0.3° (máx 2°), queda: não
+ok    · checagem de segurança: 4/4 regras
+FALHA · cadeia: as etapas falam de arquivos diferentes (boxe_curto.npz, boxe_g1.npz)
+3 de 4 etapas ok
+saída: 1

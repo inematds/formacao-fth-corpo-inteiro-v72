@@ -1,0 +1,2 @@
+leap_hand/right_hand.xml: mão avulsa: 16 GDL · 16 atuadores
+shadow_hand/right_hand.xml: mão avulsa: 24 GDL · 20 atuadores

@@ -1,0 +1,8 @@
+{
+  "descricao": "Três comandos que a camada de baixo tem de recusar antes de mexer no robô.",
+  "comandos": [
+    {"acao": "alcancar", "mao": "direita", "alvo_m": [0.90, -0.20, 0.15]},
+    {"acao": "girar_tronco", "graus": 200},
+    {"acao": "pular"}
+  ]
+}

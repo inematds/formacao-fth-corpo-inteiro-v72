@@ -1,0 +1,7 @@
+gravado: ~/fth/movimentos/aceno.bvh (60 quadros a 30 Hz)
+arquivo: aceno.bvh
+raiz: Hips · juntas: 5 · pontas (End Site): 2 · canais por quadro: 18
+ordem de rotação: Zrotation Xrotation Yrotation · unidade provável: cm (maior OFFSET 30.0)
+quadros: 60 · fps: 30 · duração: 2.0 s
+linhas de movimento conferidas: 60/60
+saída: 0

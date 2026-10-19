@@ -1,0 +1,286 @@
+{
+  "slug": "maos",
+  "num": 6,
+  "menu": "Mãos",
+  "titulo": "Mãos: o problema que ainda não está resolvido",
+  "titulo_curto": "Mãos",
+  "minutos": 15,
+  "lead": "O corpo inteiro anda, equilibra e imita; na hora de pegar, tudo depende de uma mão que tem uma fração dos graus de liberdade da nossa e quase nenhum tato. Nesta aula você conta as juntas da mão do G1 no modelo, compara com duas mãos de pesquisa e mede um aperto simulado, sabendo exatamente o que esse número é e o que não é.",
+  "objetivo": "contar os graus de liberdade da mão do G1, comparar com outras mãos e medir um aperto simulado no modelo.",
+  "competencias": [
+    "ler-mao-no-mjcf",
+    "comparar-maos-de-robo",
+    "interpretar-forca-simulada"
+  ],
+  "aprende": [
+    {
+      "icone": "lista",
+      "t": "A Dex3-1 do G1: 7 GDL por mão (polegar 3, indicador 2, médio 2)"
+    },
+    {
+      "icone": "chip",
+      "t": "Torque declarado no MJCF e o que ele limita"
+    },
+    {
+      "icone": "grafico",
+      "t": "Um aperto simulado: força de contato por dedo"
+    },
+    {
+      "icone": "lupa",
+      "t": "Mãos de pesquisa (LEAP, Shadow) e as do mercado, com fonte"
+    }
+  ],
+  "hero_alt": "Mão robótica cinza escura de três dedos apertando um pequeno cilindro sobre a bancada, com cabos finos e luz lateral.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Da junta ao objeto",
+      "sub": "Clique em cada bloco.",
+      "nos": [
+        {
+          "icone": "lista",
+          "titulo": "GDL",
+          "sub": "7 por mão",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "polegar 3, indicador 2, médio 2"
+            }
+          ],
+          "detalhe": "A Dex3-1, mão do G1 EDU, tem 7 graus de liberdade (fato, página do G1 lida em 19/10/2026). O modelo scene_with_hands.xml do Menagerie traz exatamente essas 7 juntas por mão: o robô passa de 29 para 43 atuadores."
+        },
+        {
+          "icone": "chip",
+          "titulo": "Atuador",
+          "sub": "1,4–2,45 N·m",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "posição, kp=500"
+            }
+          ],
+          "detalhe": "Cada junta da mão tem um atuador de posição com o torque limitado pelo actuatorfrcrange do MJCF: 2,45 N·m na base do polegar e 1,4 N·m nas outras. É esse teto que limita o aperto."
+        },
+        {
+          "icone": "alvo",
+          "titulo": "Contato",
+          "sub": "força por dedo",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "grafico",
+              "t": "N em cada falange"
+            }
+          ],
+          "detalhe": "Quando o dedo encosta, a força no objeto depende do torque e de onde o contato cai: perto da junta, o mesmo torque vira mais força. Por isso os três dedos dão números tão diferentes no kit."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "Tato",
+          "sub": "opcional",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "não está no modelo"
+            }
+          ],
+          "detalhe": "A Dex3-1 tem matriz tátil opcional (fato). O modelo do Menagerie não simula tato: o robô simulado sabe a força de contato porque o simulador calcula, o robô real só sabe se tiver o sensor."
+        }
+      ],
+      "legenda": "Poucos graus de liberdade e pouco tato: é aqui que as tarefas finas ainda falham."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "As mãos que você vai encontrar",
+      "sub": "Clique em cada grupo.",
+      "passos": [
+        {
+          "titulo": "Nos humanoides",
+          "sub": "fato",
+          "texto": [
+            "Unitree Dex3-1: 7 GDL, tátil opcional, no pacote do G1 EDU (fato, unitree.com/g1).",
+            "No modelo: as duas mãos do G1 do Menagerie, com limites e torque declarados."
+          ]
+        },
+        {
+          "titulo": "De pesquisa",
+          "sub": "no Menagerie",
+          "texto": [
+            "LEAP Hand: 16 GDL, um atuador por junta. Shadow Hand: 24 juntas e 20 atuadores, porque alguns dedos têm juntas acopladas por tendão.",
+            "Os dois modelos estão no Menagerie: basta acrescentar a pasta ao sparse-checkout."
+          ]
+        },
+        {
+          "titulo": "Do mercado",
+          "sub": "relatado",
+          "texto": [
+            "Inspire RH56H1: 6 atuadores e 11 juntas, 260 pontos táteis, cerca de US$ 4.500–5.780 em revenda (relatado). Sharpa Wave: 22 GDL, mais de 1.000 sensores por ponta de dedo, cerca de US$ 20 mil (relatado, CES 2026).",
+            "A mão do Optimus não tem dado verificado pela pesquisa da formação. Preço de mão varia por versão e revenda; nada aqui é recomendação de compra."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Contar as juntas e apertar um cilindro",
+      "sub": "O mao.py conta as juntas de cada mão no MJCF, lê o torque declarado e fecha a mão direita sobre um cilindro fixo de 4 cm, com a pelve no pórtico. Lê a força normal de contato de cada dedo depois de 2 s.",
+      "blocos": [
+        {
+          "rot": "Terminal · a mão do G1",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/mao.py; echo \"saída: $?\""
+        },
+        {
+          "rot": "Trecho · kit/mao.py",
+          "icone": "arquivo",
+          "conteudo": "FECHAR = {\"right_hand_index_0_joint\": 1.57, \"right_hand_index_1_joint\": 1.75,\n          \"right_hand_middle_0_joint\": 1.57, \"right_hand_middle_1_joint\": 1.75,\n          \"right_hand_thumb_0_joint\": 0.0, \"right_hand_thumb_1_joint\": -1.05, \"right_hand_thumb_2_joint\": -1.75}"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>modelo: unitree_g1/scene_with_hands.xml · nu=43\nmão left: 7 GDL (polegar 3, indicador 2, médio 2)\nmão right: 7 GDL (polegar 3, indicador 2, médio 2)\ntorque declarado por junta da mão: 1.40 a 2.45 N·m (actuatorfrcrange)\naperto simulado num cilindro fixo de 4 cm (mão direita, 2 s):\n  polegar  :  18.6 N\n  indicador:  53.0 N\n  médio    :  81.4 N\ndedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô\nsaída: 0</pre><p>7 GDL por mão, como na ficha da Dex3-1. As forças são do modelo: o cilindro é fixo, o PD empurra até o limite de torque, e o médio pega perto da junta. Não é a força de preensão do robô, que a Unitree não publica na página lida.</p>"
+          },
+          {
+            "rot": "Erro comum: modelo sem mãos",
+            "html": "<pre>modelo: unitree_g1/scene.xml · nu=29\nERRO: este modelo não tem juntas de mão. No G1, use unitree_g1/scene_with_hands.xml.\nsaída: 1</pre><p>O scene.xml do G1 é a versão de 29 GDL, sem mãos. Para as mãos, use unitree_g1/scene_with_hands.xml.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Duas mãos de pesquisa para comparar",
+      "sub": "Acrescenta as pastas da LEAP Hand e da Shadow Hand ao seu Menagerie (sparse-checkout add, sem baixar o resto) e conta as juntas.",
+      "blocos": [
+        {
+          "rot": "Terminal · LEAP e Shadow",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/mujoco_menagerie && git sparse-checkout add leap_hand shadow_hand\ncd $F/corpo-inteiro && . $F/.venv/bin/activate\nfor h in leap_hand/right_hand.xml shadow_hand/right_hand.xml; do python3 kit/mao.py --modelo $h | tail -1 | sed \"s#^#$h: #\"; done"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>leap_hand/right_hand.xml: mão avulsa: 16 GDL · 16 atuadores\nshadow_hand/right_hand.xml: mão avulsa: 24 GDL · 20 atuadores</pre><p>Na Shadow, 24 juntas para 20 atuadores: quatro juntas acompanham outras por acoplamento. Mais GDL não é o mesmo que mais motores.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Contar, comparar, apertar.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · A mão do G1",
+          "min": "5 min",
+          "texto": "Rode o mao.py e confira os 7 GDL das duas mãos.",
+          "pronto": "<code>python3 kit/mao.py | tail -1</code> → <code>dedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Só contar",
+          "min": "3 min",
+          "texto": "Rode só a contagem, sem a simulação do aperto.",
+          "pronto": "<code>python3 kit/mao.py --so-contar | grep -c \"7 GDL\"</code> → <code>2</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Outra mão",
+          "min": "10 min",
+          "texto": "Acrescente a wonik_allegro ao sparse-checkout e conte as juntas da mão direita dela.",
+          "pronto": "<code>python3 kit/mao.py --modelo wonik_allegro/right_hand.xml | tail -1</code> → uma linha <code>mão avulsa: [N] GDL · [N] atuadores</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "O kit mediu 81 N no dedo médio. Como esse número pode ir para uma ficha?",
+          "opcoes": [
+            "Como força de preensão da Dex3-1, na coluna do fabricante.",
+            "Como estimativa do modelo, com as condições do ensaio.",
+            "Como medida do robô real, desde que se cite o commit do Menagerie usado.",
+            "Em lugar nenhum: força de contato não sai do simulador."
+          ],
+          "certa": 1,
+          "explica": "É o que o MJCF e o simulador produzem nessas condições. A Unitree não publica força de preensão na página lida; chamar o número de medida do robô seria inventar.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "A Shadow Hand tem 24 juntas e 20 atuadores. O que isso quer dizer?",
+          "opcoes": [
+            "Que quatro juntas estão quebradas no modelo do Menagerie.",
+            "Que o MuJoCo só aceita 20 atuadores por modelo de mão.",
+            "Que algumas juntas são acopladas e seguem outras, sem motor próprio.",
+            "Que quatro juntas são da base e não fazem parte da mão em si."
+          ],
+          "certa": 2,
+          "explica": "Juntas acopladas (por tendão, no modelo) se mexem junto com outras. GDL não é número de motores.",
+          "ref": "passos"
+        },
+        {
+          "p": "Por que a força simulada é bem diferente entre polegar, indicador e médio?",
+          "opcoes": [
+            "O contato cai a distâncias diferentes da junta.",
+            "Porque o polegar do modelo não tem atuador de posição.",
+            "Porque a simulação é aleatória e muda a cada vez que roda.",
+            "Porque o cilindro fica mais perto do indicador por um erro de posição do kit."
+          ],
+          "certa": 0,
+          "explica": "Força = torque / braço de alavanca: contato perto da junta dá mais força com o mesmo limite de 1,4 N·m. A simulação é determinística (duas capturas iguais).",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "7 GDL",
+          "texto": "A Dex3-1 do G1 tem 7 juntas por mão, e o modelo também."
+        },
+        {
+          "t": "Força",
+          "texto": "Força de aperto do simulador é estimativa do modelo, dita como tal."
+        },
+        {
+          "t": "Gargalo",
+          "texto": "Poucos GDL e pouco tato: é onde as tarefas finas ainda falham."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "Unitree G1 (página do fabricante)",
+          "href": "https://www.unitree.com/g1",
+          "icone": "robo"
+        },
+        {
+          "t": "MuJoCo Menagerie: modelos de mãos",
+          "href": "https://github.com/google-deepmind/mujoco_menagerie",
+          "icone": "git"
+        },
+        {
+          "t": "FTH 0, aula 4: atuadores e torque",
+          "href": "https://inematds.github.io/formacao-fth-anatomia-v72/aulas/atuadores/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

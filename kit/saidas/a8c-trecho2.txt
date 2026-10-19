@@ -1,0 +1,9 @@
+violações de limite (Menagerie, folga 0.5°): 0
+erro médio de junta: 1.5° · pior junta: right_ankle_pitch_joint (5.1°)
+ok    · limites de junta: 0 quadro×junta fora
+FALHA · velocidade de junta: máx 635°/s em left_knee_joint (teto 400°/s)
+FALHA · pés acima do chão: site do pé desce até 1.4 cm (de pé: 3.3 cm)
+ok    · área de trabalho: pelve se afasta até 0.05 m (raio 1.5 m)
+segurança: 2/4 regras
+cadeia: um só movimento (boxe_trecho2.npz)
+3 de 4 etapas ok

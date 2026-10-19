@@ -1,0 +1,10 @@
+latência do operador ao robô: 80 ms · tolerância: 3 cm · controle a 50 Hz
+alvo 1 · t=0.2 s · mão direita  · atingido em 162 ms
+alvo 2 · t=0.9 s · mão esquerda · atingido em 160 ms
+alvo 3 · t=1.6 s · mão direita  · atingido em 174 ms
+alvo 4 · t=2.3 s · mão esquerda · atingido em 154 ms
+alvo 5 · t=3.0 s · mão direita  · atingido em 166 ms
+alvo 6 · t=3.7 s · mão direita  · não atingido (chegou a 21.7 cm)
+robô de pé: sim
+alvos atingidos: 5/6
+saída: 0

@@ -1,0 +1,8 @@
+clipe: 251021_04_boxing_120Hz_cm_3DsMax.bvh · 1200 quadros a 120 Hz (10.0 s) · 28 pontos do esqueleto
+altura do humano no clipe: 1.67 m · robô: unitree_g1 (GMR, config bvh_xsens_to_g1.json)
+qpos: 1200 × 36 (base 7 + 29 juntas, mesma ordem do Menagerie)
+menor margem até o limite: right_ankle_roll_joint (0.0°, 0 = encostado)
+violações de limite (Menagerie, folga 0.5°): 0
+tempo de retargeting: menos de 1 min em CPU
+gravado: ~/fth/movimentos/boxe_g1.npz
+saída: 0

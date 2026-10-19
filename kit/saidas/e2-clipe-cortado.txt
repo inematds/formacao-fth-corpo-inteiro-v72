@@ -1,0 +1,6 @@
+arquivo: cortado.bvh
+raiz: Hips · juntas: 23 · pontas (End Site): 5 · canais por quadro: 72
+ordem de rotação: Yrotation Xrotation Zrotation · unidade provável: cm (maior OFFSET 43.3)
+quadros: 4249 · fps: 120 · duração: 35.4 s
+linhas de movimento conferidas: 4000/4249
+saída: 1
