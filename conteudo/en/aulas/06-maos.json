@@ -1,0 +1,290 @@
+{
+  "slug": "maos",
+  "num": 6,
+  "menu": "Hands",
+  "titulo": "Hands: the problem that is still unsolved",
+  "titulo_curto": "Hands",
+  "minutos": 15,
+  "lead": "The whole body walks, balances and imitates; when it is time to grasp, everything depends on a hand with few degrees of freedom and almost no touch. In this lesson you count the joints of the G1's hand in the model, compare it with two research hands, and measure a simulated grip, knowing what that number is and what it is not.",
+  "objetivo": "count the degrees of freedom of the G1's hand, compare it with other hands, and measure a simulated grip in the model.",
+  "competencias": [
+    "ler-mao-no-mjcf",
+    "comparar-maos-de-robo",
+    "interpretar-forca-simulada"
+  ],
+  "aprende": [
+    {
+      "icone": "lista",
+      "t": "The G1's Dex3-1: 7 DoF per hand (thumb 3, index 2, middle 2)"
+    },
+    {
+      "icone": "chip",
+      "t": "Torque declared in the MJCF and what it limits"
+    },
+    {
+      "icone": "grafico",
+      "t": "A simulated grip: contact force per finger"
+    },
+    {
+      "icone": "lupa",
+      "t": "Research hands (LEAP, Shadow) and the ones on the market, with sources"
+    }
+  ],
+  "hero_alt": "Dark gray three-finger robot hand squeezing a small cylinder on the workbench, with thin cables and side lighting.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "From the joint to the object",
+      "sub": "Click each block.",
+      "nos": [
+        {
+          "icone": "lista",
+          "titulo": "DoF",
+          "sub": "7 per hand",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "thumb 3, index 2, middle 2"
+            }
+          ],
+          "detalhe": "The Dex3-1, the G1 EDU's hand, has 7 degrees of freedom (fact, G1 page read on 10/19/2026). The Menagerie's scene_with_hands.xml model brings exactly those 7 joints per hand: the robot goes from 29 to 43 actuators."
+        },
+        {
+          "icone": "chip",
+          "titulo": "Actuator",
+          "sub": "1.4–2.45 N·m",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "position, kp=500"
+            }
+          ],
+          "detalhe": "Each joint in the hand has a position actuator with its torque limited by the MJCF's actuatorfrcrange: 2.45 N·m at the base of the thumb and 1.4 N·m on the others. That cap is what limits the grip."
+        },
+        {
+          "icone": "alvo",
+          "titulo": "Contact",
+          "sub": "force per finger",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "grafico",
+              "t": "N on each phalanx"
+            }
+          ],
+          "detalhe": "When the finger touches, the force on the object depends on the torque and on where the contact lands: closer to the joint, the same torque becomes more force. That's why the three fingers give such different numbers in the kit."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "Touch",
+          "sub": "optional",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "not in the model"
+            }
+          ],
+          "detalhe": "The Dex3-1 has an optional tactile array (fact). The Menagerie model doesn't simulate touch: the simulated robot knows the contact force because the simulator computes it, while the real robot only knows it if it has the sensor."
+        }
+      ],
+      "legenda": "Few degrees of freedom and little touch: this is where fine tasks still fail."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "The hands you'll run into",
+      "sub": "Click each group.",
+      "passos": [
+        {
+          "titulo": "On humanoids",
+          "sub": "fact",
+          "texto": [
+            "Unitree Dex3-1: 7 DoF, optional tactile, included in the G1 EDU package (fact, unitree.com/g1).",
+            "In the model: both of the Menagerie G1's hands, with limits and torque declared."
+          ]
+        },
+        {
+          "titulo": "From research",
+          "sub": "in the Menagerie",
+          "texto": [
+            "LEAP Hand: 16 DoF, one actuator per joint. Shadow Hand: 24 joints and 20 actuators, because some fingers have joints coupled by tendon.",
+            "Both models are in the Menagerie: just add the folder to the sparse-checkout."
+          ]
+        },
+        {
+          "titulo": "From the market",
+          "sub": "reported",
+          "texto": [
+            "Inspire RH56H1: 6 actuators and 11 joints, 260 tactile points, about US$ 4,500–5,780 resold (reported). Sharpa Wave: 22 DoF, over 1,000 sensors per fingertip, about US$ 20 thousand (reported, CES 2026).",
+            "The Optimus hand has no data verified by the course research. Hand prices vary by version and reseller; nothing here is a buying recommendation."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Count the joints and squeeze a cylinder",
+      "sub": "mao.py counts the joints of each hand in the MJCF, reads the declared torque and closes the right hand around a fixed 4 cm cylinder, with the pelvis on the gantry. It reads each finger's normal contact force after 2 s.",
+      "blocos": [
+        {
+          "rot": "Terminal · the G1 hand",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/mao.py; echo \"saída: $?\""
+        },
+        {
+          "rot": "Excerpt · kit/mao.py",
+          "icone": "arquivo",
+          "conteudo": "FECHAR = {\"right_hand_index_0_joint\": 1.57, \"right_hand_index_1_joint\": 1.75,\n          \"right_hand_middle_0_joint\": 1.57, \"right_hand_middle_1_joint\": 1.75,\n          \"right_hand_thumb_0_joint\": 0.0, \"right_hand_thumb_1_joint\": -1.05, \"right_hand_thumb_2_joint\": -1.75}"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>modelo: unitree_g1/scene_with_hands.xml · nu=43\nmão left: 7 GDL (polegar 3, indicador 2, médio 2)\nmão right: 7 GDL (polegar 3, indicador 2, médio 2)\ntorque declarado por junta da mão: 1.40 a 2.45 N·m (actuatorfrcrange)\naperto simulado num cilindro fixo de 4 cm (mão direita, 2 s):\n  polegar  :  18.6 N\n  indicador:  53.0 N\n  médio    :  81.4 N\ndedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô\nsaída: 0</pre><p>7 degrees of freedom per hand, as in the Dex3-1 spec sheet. The forces come from the model: the cylinder is fixed, the PD pushes up to the torque limit, and the middle finger grips close to the joint. This is not the robot's grip force, which Unitree doesn't publish on the page I read.</p>"
+          },
+          {
+            "rot": "Common error: model without hands",
+            "html": "<pre>modelo: unitree_g1/scene.xml · nu=29\nERRO: este modelo não tem juntas de mão. No G1, use unitree_g1/scene_with_hands.xml.\nsaída: 1</pre><p>The G1's scene.xml is the 29-DoF version, without hands. For the hands, use unitree_g1/scene_with_hands.xml.</p>"
+          },
+          {
+            "rot": "Just count + Allegro",
+            "html": "<pre>2\nmão avulsa: 16 GDL · 16 atuadores</pre><p>Two hands with 7 degrees of freedom on the G1; the Allegro (wonik_allegro) has 16 degrees of freedom and 16 actuators.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Two research hands to compare",
+      "sub": "Adds the LEAP Hand and Shadow Hand folders to your Menagerie (sparse-checkout add, without downloading the rest) and counts the joints.",
+      "blocos": [
+        {
+          "rot": "Terminal · LEAP and Shadow",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/mujoco_menagerie && git sparse-checkout add leap_hand shadow_hand\ncd $F/corpo-inteiro && . $F/.venv/bin/activate\nfor h in leap_hand/right_hand.xml shadow_hand/right_hand.xml; do python3 kit/mao.py --modelo $h | tail -1 | sed \"s#^#$h: #\"; done"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>leap_hand/right_hand.xml: mão avulsa: 16 GDL · 16 atuadores\nshadow_hand/right_hand.xml: mão avulsa: 24 GDL · 20 atuadores</pre><p>On the Shadow, 24 joints for 20 actuators: four joints follow others through coupling. More DoF is not the same as more motors.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "Count, compare, squeeze.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · The G1 hand",
+          "min": "5 min",
+          "texto": "Run mao.py and check the 7 DoF on both hands.",
+          "pronto": "<code>python3 kit/mao.py | tail -1</code> → <code>dedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Count only",
+          "min": "3 min",
+          "texto": "Run only the count, without the grip simulation.",
+          "pronto": "<code>python3 kit/mao.py --so-contar | grep -c \"7 GDL\"</code> → <code>2</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Another hand",
+          "min": "10 min",
+          "texto": "Add wonik_allegro to the sparse-checkout and count the joints of its right hand.",
+          "pronto": "<code>python3 kit/mao.py --modelo wonik_allegro/right_hand.xml | tail -1</code> → one line <code>mão avulsa: [N] GDL · [N] atuadores</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after your answer.",
+      "perguntas": [
+        {
+          "p": "The kit measured 81 N on the middle finger. How can this number go into a spec sheet?",
+          "opcoes": [
+            "As the Dex3-1 grip force, in the manufacturer column.",
+            "As a model estimate, with the test conditions.",
+            "As a measurement of the real robot, as long as you cite the Menagerie commit used.",
+            "Nowhere: contact force does not come out of the simulator."
+          ],
+          "certa": 1,
+          "explica": "It is what the MJCF and the simulator produce under those conditions. Unitree does not publish grip force on the page we read; calling the number a measurement of the real robot would be making it up.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "The Shadow Hand has 24 joints and 20 actuators. What does that mean?",
+          "opcoes": [
+            "That four joints are broken in the Menagerie model.",
+            "That MuJoCo only accepts 20 actuators per hand model.",
+            "That some joints are coupled and follow others, with no motor of their own.",
+            "That four joints belong to the base and are not part of the hand itself."
+          ],
+          "certa": 2,
+          "explica": "Coupled joints (by tendon, in the model) move together with other joints. Degrees of freedom is not the number of motors.",
+          "ref": "passos"
+        },
+        {
+          "p": "Why is the simulated force so different between the thumb, index finger and middle finger?",
+          "opcoes": [
+            "The contact falls at different distances from the joint.",
+            "Because the model's thumb has no position actuator.",
+            "Because the simulation is random and changes every time it runs.",
+            "Because the cylinder sits closer to the index finger due to a kit position error."
+          ],
+          "certa": 0,
+          "explica": "Force = torque / lever arm: contact close to the joint gives more force with the same 1.4 N·m limit. The simulation is deterministic (two identical captures).",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "7 degrees of freedom",
+          "texto": "The G1's Dex3-1 has 7 joints per hand, and so does the model."
+        },
+        {
+          "t": "Force",
+          "texto": "The simulator's grip force is a model estimate, and it is reported as such."
+        },
+        {
+          "t": "Bottleneck",
+          "texto": "Few degrees of freedom and little touch: this is where fine tasks still fail."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Going further",
+      "links": [
+        {
+          "t": "Unitree G1 (manufacturer's page)",
+          "href": "https://www.unitree.com/g1",
+          "icone": "robo"
+        },
+        {
+          "t": "MuJoCo Menagerie: hand models",
+          "href": "https://github.com/google-deepmind/mujoco_menagerie",
+          "icone": "git"
+        },
+        {
+          "t": "FTH 0, lesson 4: actuators and torque",
+          "href": "https://inematds.github.io/formacao-fth-anatomia-v72/en/aulas/atuadores/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

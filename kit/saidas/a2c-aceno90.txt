@@ -1,0 +1,2 @@
+gravado: ~/fth/movimentos/aceno.bvh (90 quadros a 30 Hz)
+quadros: 90 · fps: 30 · duração: 3.0 s

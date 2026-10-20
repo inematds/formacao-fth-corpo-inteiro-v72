@@ -1,0 +1,399 @@
+{
+  "slug": "coreografia",
+  "num": 8,
+  "menu": "Proyecto",
+  "titulo": "Proyecto: un movimiento seguro de punta a punta",
+  "titulo_curto": "Proyecto de punta a punta",
+  "minutos": 15,
+  "lead": "Cada clase dejó una pieza: clip leído, retargeting sin violaciones, motion tracking medido, chequeo. Lo que va a un robot es la cadena completa, en un solo movimiento. En esta clase corres las cuatro etapas en secuencia, confirmas que todas pasan y hablan del mismo archivo, y generas tu plan de estudio.",
+  "objetivo": "ejecutar la cadena mocap → retargeting → motion tracking → seguridad en un solo movimiento y probar que las cuatro etapas pasan.",
+  "competencias": [
+    "encadear-pipeline-de-movimento",
+    "checar-seguranca-de-movimento",
+    "planejar-proximo-passo"
+  ],
+  "aprende": [
+    {
+      "icone": "escudo",
+      "t": "Cuatro reglas de seguridad leídas del propio movimiento"
+    },
+    {
+      "icone": "fila",
+      "t": "La cadena de cuatro etapas y el archivo que las une"
+    },
+    {
+      "icone": "x",
+      "t": "El error más común: verificar un movimiento y mandar otro"
+    },
+    {
+      "icone": "calendario",
+      "t": "Tu plan con fechas para los próximos pasos"
+    }
+  ],
+  "hero_alt": "Robot humanoide de visor oscuro haciendo un movimiento lento de brazos dentro de un cuadrado marcado con cinta amarilla, bajo un pórtico, con un técnico con tableta desenfocado.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "La cadena de un movimiento",
+      "sub": "Haz clic en cada etapa. Cada script guarda un resumen en ~/fth/movimentos/etapas/.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Mocap",
+          "sub": "clase 2",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "cuadros × líneas"
+            }
+          ],
+          "detalhe": "El BVH leído y verificado: cuadros, fps, líneas completas. Graba etapas/1-clipe.json."
+        },
+        {
+          "icone": "camadas",
+          "titulo": "Retarget",
+          "sub": "clase 3",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "0 violaciones"
+            }
+          ],
+          "detalhe": "El mismo BVH llevado al G1 por el GMR, sin ningún cuadro fuera del límite. Graba etapas/2-retarget.json con el nombre del BVH de origen."
+        },
+        {
+          "icone": "play",
+          "titulo": "Seguimiento",
+          "sub": "clase 4",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "error ≤ 2°, sin caída"
+            }
+          ],
+          "detalhe": "El movimiento reproducido en el simulador con el pórtico: error medio de articulación y caída. En un proyecto de verdad, aquí entra la policy de motion tracking entrenada (mjlab, SONIC), y el criterio es sin pórtico."
+        },
+        {
+          "icone": "escudo",
+          "titulo": "Seguridad",
+          "sub": "4 reglas",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "check",
+              "t": "límites, velocidad, pies, área"
+            }
+          ],
+          "detalhe": "Límites de articulación, velocidad de articulación por debajo de un tope, pies sin atravesar el suelo y pelvis dentro del área de trabajo. El tope de velocidad y el radio del área son reglas de tu laboratorio: la investigación de la formación no trae la velocidad máxima por articulación del G1."
+        }
+      ],
+      "estilo": "escada",
+      "legenda": "La cadena solo vale si las etapas 2, 3 y 4 hablan del mismo archivo y la 2 viene del BVH de la etapa 1."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Las cuatro reglas de seguridad",
+      "sub": "El checar_seguranca.py lee el movimiento con retargeting, cuadro a cuadro, en el G1 del Menagerie.",
+      "blocos": [
+        {
+          "rot": "Terminal · verificar el boxeo",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/checar_seguranca.py $F/movimentos/boxe_g1.npz; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>ok    · limites de junta: 0 quadro×junta fora\nok    · velocidade de junta: máx 313°/s em left_elbow_joint (teto 400°/s)\nok    · pé não afunda no chão: site do pé desce até 3.8 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.22 m (raio 1.5 m)\nsegurança: 4/4 regras\nsaída: 0</pre><p>El codo izquierdo llega a 313°/s en un golpe. Con un tope de 150°/s (por ejemplo, para la primera prueba cerca de personas), la misma regla reprueba el movimiento: <code>--teto-graus-s 150</code> da <code>segurança: 3/4 regras</code>.</p>"
+          },
+          {
+            "rot": "Tope de 150°/s",
+            "html": "<pre>segurança: 3/4 regras</pre><p>Con el tope de la primera prueba cerca de personas, el boxeo reprueba en la velocidad.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "La cadena completa en un solo movimiento",
+      "sub": "Corre las cuatro etapas en secuencia sobre el mismo clip y verifica. Cada línea muestra el resultado de una etapa; la verificación dice si la cadena cierra.",
+      "blocos": [
+        {
+          "rot": "Terminal · cadena completa",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro; B=$F/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh\n. $F/.venv/bin/activate && python3 kit/ler_clipe.py $B | tail -1\n( . $F/.venv-gmr/bin/activate && python3 kit/retarget.py $B --fim 1200 --nome boxe_g1 | grep violações )\npython3 kit/reproduzir.py $F/movimentos/boxe_g1.npz | grep \"erro médio\"\npython3 kit/checar_seguranca.py $F/movimentos/boxe_g1.npz | tail -1\npython3 kit/conferir_pipeline.py; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>linhas de movimento conferidas: 4249/4249\nviolações de limite (Menagerie, folga 0.5°): 0\nerro médio de junta: 0.3° · pior junta: right_shoulder_roll_joint (1.9°)\nsegurança: 4/4 regras\nok    · mocap (BVH lido): 4249 quadros a 120 Hz\nok    · retargeting: 1200 quadros, 0 violações de limite\nok    · rastreio no simulador: erro médio 0.3° (máx 2°), queda: não\nok    · checagem de segurança: 4/4 regras\ncadeia: um só movimento (boxe_g1.npz)\n4 etapas ok\nsaída: 0</pre><p>Cuatro etapas ok y un solo movimiento de principio a fin.</p>"
+          },
+          {
+            "rot": "Error común: cadena rota",
+            "html": "<pre>segurança: 4/4 regras\nviolações de limite (Menagerie, folga 0.5°): 0\nerro médio de junta: 0.3° · pior junta: right_shoulder_roll_joint (2.7°)\nok    · mocap (BVH lido): 4249 quadros a 120 Hz\nok    · retargeting: 600 quadros, 0 violações de limite\nok    · rastreio no simulador: erro médio 0.3° (máx 2°), queda: não\nok    · checagem de segurança: 4/4 regras\nFALHA · cadeia: as etapas falam de arquivos diferentes (boxe_curto.npz, boxe_g1.npz)\n3 de 4 etapas ok\nsaída: 1</pre><p>Después de cerrada la cadena, alguien rehízo el retargeting (ahora con 600 cuadros) y el motion tracking, pero no la verificación de seguridad. Cada etapa pasa sola; la cadena no: la seguridad se verificó en un archivo y lo que iría al robot es otro.</p>"
+          },
+          {
+            "rot": "Otro tramo: reprobado",
+            "html": "<pre>violações de limite (Menagerie, folga 0.5°): 0\nerro médio de junta: 1.5° · pior junta: right_ankle_pitch_joint (5.1°)\nok    · limites de junta: 0 quadro×junta fora\nFALHA · velocidade de junta: máx 635°/s em left_knee_joint (teto 400°/s)\nFALHA · pé não afunda no chão: site do pé desce até 1.4 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.05 m (raio 1.5 m)\nsegurança: 2/4 regras\ncadeia: um só movimento (boxe_trecho2.npz)\n3 de 4 etapas ok</pre><p>Los cuadros de 1200 a 2400 pasan en el retargeting y en el motion tracking, pero la rodilla llega a 635°/s y el pie baja 1,9 cm por debajo de la pose de pie (el retargeting no impone el contacto con el suelo). La cadena cierra en un solo archivo y reprueba: es el resultado correcto.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "simfila",
+      "titulo": "Un lote de movimientos pasando por la cadena",
+      "sub": "Bases como la de SONIC tienen millones de cuadros: la cadena corre en cola. Córrela, interrúmpela a la mitad y córrela de nuevo.",
+      "tarefas": [
+        "boxeo, cuadros 0–1200",
+        "boxeo, cuadros 1200–2400",
+        "boxeo, cuadros 3600–4249"
+      ],
+      "falha": 1,
+      "rot": {
+        "entrada": "por revisar/",
+        "rodando": "en la cadena/",
+        "feito": "aprobados/",
+        "falhou": "reprobados/",
+        "rodar": "Correr el lote",
+        "parar": "Interrumpir (Ctrl+C)",
+        "zerar": "Volver a empezar"
+      },
+      "msg": {
+        "inicio": "3 movimientos en por revisar/. Haz clic en \"Correr el lote\".",
+        "rodando": "Un movimiento por vez: retargeting, motion tracking y seguridad, y después aprobados/ o reprobados/.",
+        "parou": "Interrumpido. El movimiento del medio quedó en en la cadena/. Córrelo de nuevo para ver la reanudación.",
+        "retoma": "Reanudación: lo que estaba en la cadena volvió a por revisar/. Lo que ya fue aprobado no se rehace.",
+        "fim": "Lote vacío: aprobados/ se queda con todo.",
+        "fimfalha": "Lote vacío. El tramo 1200–2400 fue a reprovados/ con el motivo (rodilla a 635°/s y pie bajo el suelo): es el que revisas, sin rehacer el lote."
+      },
+      "legenda": "Simulación en el navegador: aquí nada corre de verdad. Aprobado y reprobado coinciden con el kit (19/10/2026): el tramo 1200–2400 reprueba en la verificación de seguridad."
+    },
+    {
+      "tipo": "mapa",
+      "titulo": "Lo que armaste en este curso",
+      "sub": "Cuatro entregas principales. Haz clic en un nivel para ver el \"listo cuando\".",
+      "degraus": [
+        {
+          "aula": "wbc",
+          "icone": "camadas",
+          "quando": "Clase 1",
+          "titulo": "Capas",
+          "sub": "S2, S1, S0",
+          "saida": "Banco de trabajo y lazo de tres capas.",
+          "passo": "El banco de trabajo en ~/fth y las tres capas contadas: la base de todas las prácticas."
+        },
+        {
+          "aula": "retargeting",
+          "icone": "usuario",
+          "quando": "Clases 2–3",
+          "titulo": "Dato",
+          "sub": "BVH → G1",
+          "saida": "Clip verificado y retargeted sin violaciones.",
+          "passo": "Movimiento humano leído, con la licencia considerada, y llevado al G1 con GMR en un entorno propio."
+        },
+        {
+          "aula": "teleop",
+          "icone": "play",
+          "quando": "Clases 4–6",
+          "titulo": "Ejecución",
+          "sub": "motion tracking, teleop",
+          "saida": "Error, latencia y agarre medidos.",
+          "passo": "Replay con y sin pórtico, teleop con latencia y la mano del G1 en el modelo."
+        },
+        {
+          "aula": "coreografia",
+          "icone": "escudo",
+          "quando": "Clases 7–8",
+          "titulo": "Cadena",
+          "sub": "comando, seguridad",
+          "saida": "Cuatro etapas ok en un solo movimiento.",
+          "passo": "Comandos de alto nivel verificados y la cadena mocap → seguridad cerrada."
+        }
+      ],
+      "resultado": {
+        "titulo": "Al final del curso",
+        "texto": "Un movimiento humano llevado al G1 simulado con cada etapa verificada.",
+        "total": "8 clases"
+      },
+      "rolagem_fim": {
+        "titulo": "El curso completo",
+        "texto": "Cuatro entregas en secuencia. El siguiente paso es operar un robot real con seguridad: el curso 4 de la FTH."
+      },
+      "legenda": "El orden importa: sin el retargeting verificado, el motion tracking y la seguridad miden el movimiento equivocado."
+    },
+    {
+      "tipo": "gerador",
+      "titulo": "Genera tu plan con fechas",
+      "sub": "Elige la fecha de inicio y cuánto tiempo tienes por semana. El plan lista las prácticas de cada clase.",
+      "curso": "FTH 3 · Cuerpo completo",
+      "horas_padrao": 3,
+      "degraus": [
+        {
+          "titulo": "Clase 1 · Las tres capas",
+          "aula": "wbc"
+        },
+        {
+          "titulo": "Clase 2 · Movimiento humano como dato",
+          "aula": "movimento-humano"
+        },
+        {
+          "titulo": "Clase 3 · Retargeting con GMR",
+          "aula": "retargeting"
+        },
+        {
+          "titulo": "Clase 4 · Motion tracking",
+          "aula": "tracking"
+        },
+        {
+          "titulo": "Clase 5 · Teleoperación",
+          "aula": "teleop"
+        },
+        {
+          "titulo": "Clase 6 · Manos",
+          "aula": "maos"
+        },
+        {
+          "titulo": "Clase 7 · VLA sobre el cuerpo completo",
+          "aula": "com-vla"
+        },
+        {
+          "titulo": "Clase 8 · La cadena de punta a punta",
+          "aula": "coreografia"
+        }
+      ],
+      "txt": {
+        "titulo": "Plan — FTH 3 · Cuerpo completo",
+        "inicio": "Inicio",
+        "ritmo": "Ritmo",
+        "termino": "Fin previsto",
+        "ate": "hasta",
+        "pronto": "listo cuando",
+        "semanas": "semanas",
+        "travou": "## Qué se trabó y la regla que creé",
+        "h": "h por semana",
+        "exs": "ejercicios"
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Cerrar la cadena y ajustar las reglas.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Cadena cerrada",
+          "min": "10 min",
+          "texto": "Ejecuta la cadena completa sobre el boxeo. Antes de ejecutarla, en un banco de trabajo nuevo, la verificación muestra las etapas que faltan.",
+          "pronto": "<code>python3 kit/conferir_pipeline.py; echo \"saída: $?\"</code> → <code>4 etapas ok</code> y <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Techo de tu laboratorio",
+          "min": "5 min",
+          "texto": "Ejecuta la verificación con el techo de 150°/s y escribe en una frase qué parte del boxeo superó el techo.",
+          "pronto": "<code>python3 kit/checar_seguranca.py ~/fth/movimentos/boxe_g1.npz --teto-graus-s 150 | tail -1</code> → <code>segurança: 3/4 regras</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Un tramo que reprueba",
+          "min": "15 min",
+          "texto": "Lleva el tramo de 1200 a 2400 cuadros por la cadena completa (retarget, reproduzir y checar con el mismo archivo) y escribe qué reglas rompe y por qué.",
+          "pronto": "<code>python3 kit/conferir_pipeline.py | tail -2</code> → <code>cadeia: um só movimento (boxe_trecho2.npz)</code> y <code>3 de 4 etapas ok</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "Cada etapa pasó por separado, pero la verificación dice \"cadena rota\". ¿Qué pasó?",
+          "opcoes": [
+            "GMR cambió de versión en medio de la cadena sin avisar al kit.",
+            "El simulador dio un resultado distinto en la segunda ronda.",
+            "Las etapas revisaron archivos de movimiento diferentes.",
+            "El BVH de origen tiene menos cuadros de los que dice el encabezado."
+          ],
+          "certa": 2,
+          "explica": "Rehacer el retargeting sin rehacer la verificación deja la seguridad aprobada en un archivo y otro listo para ir al robot. La verificación compara los nombres de los archivos de cada etapa.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "¿De dónde viene el techo de 400°/s de la regla de velocidad?",
+          "opcoes": [
+            "De la ficha técnica oficial del G1, para todas las articulaciones.",
+            "Es una regla del laboratorio, ajustable: no hay un número del G1 en la investigación.",
+            "Del archivo MJCF de Menagerie, que declara la velocidad máxima de cada articulación.",
+            "De GMR, que calcula el techo de velocidad a partir del clip de captura original."
+          ],
+          "certa": 1,
+          "explica": "Sin un número del fabricante en la investigación de la formación, el curso no inventa uno: el techo es tuyo, está escrito en la regla y es ajustable con --teto-graus-s.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "¿Por qué el criterio de motion tracking de este curso usa el pórtico, y el de un proyecto real no debería?",
+          "opcoes": [
+            "El kit hace replay sin policy de equilibrio; con la policy, se mide suelto.",
+            "Porque el pórtico deja el error de articulación mayor y más fácil de medir.",
+            "Porque los robots reales siempre trabajan sujetos a un pórtico, incluso en producción.",
+            "Porque MuJoCo no consigue simular robots sueltos con las dos manos acopladas."
+          ],
+          "certa": 0,
+          "explica": "Sin la policy de motion tracking (clase 4), el G1 suelto se cae. En un proyecto con mjlab o SONIC, el motion tracking se mide sin pórtico; el pórtico queda para la primera prueba en el robot real (curso 4).",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Cadena",
+          "texto": "Mocap, retargeting, motion tracking y seguridad, siempre sobre el mismo archivo."
+        },
+        {
+          "t": "Reglas",
+          "texto": "Límite y velocidad leídos del movimiento; techos que son tuyos, escritos."
+        },
+        {
+          "t": "Siguiente",
+          "texto": "Operar el robot real con seguridad es el curso 4 de la FTH."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "Siguiente curso de la FTH: Operar un humanoide real (SDK, ROS 2 y seguridad)",
+          "href": "https://inematds.github.io/formacao-fth-operar-v72/es/",
+          "icone": "robo"
+        },
+        {
+          "t": "mjlab: entrenar el motion tracking de tu movimiento en GPU",
+          "href": "https://github.com/mujocolab/mjlab",
+          "icone": "git"
+        },
+        {
+          "t": "GR00T-WholeBodyControl: SONIC, teleop y VLA en el G1",
+          "href": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+          "icone": "git"
+        },
+        {
+          "t": "VLA v7.2, clase 8: normas y el mundo real",
+          "href": "https://inematds.github.io/vla-v72/es/aulas/mundo-real/",
+          "icone": "cerebro"
+        }
+      ]
+    }
+  ]
+}

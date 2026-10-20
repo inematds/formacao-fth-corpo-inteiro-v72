@@ -1,0 +1,1 @@
+S0 corpo inteiro (IK)    :  200 chamadas (100 Hz)

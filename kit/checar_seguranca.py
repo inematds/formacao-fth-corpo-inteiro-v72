@@ -52,7 +52,7 @@ def main():
     regras = [
         ("limites de junta", n_lim == 0, f"{n_lim} quadro×junta fora"),
         ("velocidade de junta", vmax <= a.teto_graus_s, f"máx {vmax:.0f}°/s em {fth.nome(m, fth.J, juntas[kv])} (teto {a.teto_graus_s:g}°/s)"),
-        ("pés acima do chão", zmin >= z_apoio - 0.01, f"site do pé desce até {zmin * 100:.1f} cm (de pé: {z_apoio * 100:.1f} cm)"),
+        ("pé não afunda no chão", zmin >= z_apoio - 0.01, f"site do pé desce até {zmin * 100:.1f} cm (de pé: {z_apoio * 100:.1f} cm)"),
         ("área de trabalho", raio <= a.raio_m, f"pelve se afasta até {raio:.2f} m (raio {a.raio_m:g} m)"),
     ]
     for nome, ok, txt in regras:

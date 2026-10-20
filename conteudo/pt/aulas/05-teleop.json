@@ -5,7 +5,7 @@
   "titulo": "Teleoperação de corpo inteiro",
   "titulo_curto": "Teleoperação de corpo inteiro",
   "minutos": 15,
-  "lead": "Teleoperar é a forma mais rápida de um humanoide fazer uma tarefa nova e de juntar demonstrações para treinar um VLA. O operador mexe os braços num óculos de VR, o robô repete. O que estraga a experiência é o atraso. Nesta aula você teleopera os dois braços do G1 por um roteiro, mede quantos alvos a mão atinge e vê a partir de que latência tudo desanda.",
+  "lead": "Teleoperar é o jeito mais rápido de um humanoide fazer uma tarefa nova e de juntar demonstrações para um VLA. O operador mexe os braços num óculos de VR e o robô repete; o atraso é o que estraga. Nesta aula você teleopera os dois braços do G1 por um roteiro e mede a partir de que latência tudo desanda.",
   "objetivo": "teleoperar os dois braços do G1 por um roteiro de alvos com latência e medir quantos alvos a mão atinge.",
   "competencias": [
     "simular-teleoperacao",
@@ -147,6 +147,10 @@
           {
             "rot": "Erro comum: nome da mão",
             "html": "<pre>ERRO no roteiro: mão 'esquerdo' (use direita ou esquerda)\nsaída: 1</pre><p>O roteiro aceita só \"direita\" e \"esquerda\". Erro de digitação para antes de mexer no robô, não no meio da sessão.</p>"
+          },
+          {
+            "rot": "E2: alvo trazido para dentro",
+            "html": "<pre>alvos atingidos: 6/6</pre><p>O 6º alvo com dx 0,25 em vez de 0,60: todos atingidos.</p>"
           }
         ]
       }

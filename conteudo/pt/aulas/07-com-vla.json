@@ -5,7 +5,7 @@
   "titulo": "Quando um VLA manda no corpo inteiro",
   "titulo_curto": "VLA sobre o corpo inteiro",
   "minutos": 15,
-  "lead": "Um VLA vê a cena, entende o pedido e propõe uma ação, poucas vezes por segundo. Quem transforma essa proposta em movimento seguro de 29 juntas, sem cair, é o controle de corpo inteiro. Nesta aula você manda comandos de alto nível para um controle simulado no G1 e vê o que ele executa e o que ele recusa antes de mexer em qualquer junta.",
+  "lead": "Um VLA vê a cena, entende o pedido e propõe uma ação, poucas vezes por segundo. Quem transforma isso em movimento seguro de 29 juntas, sem cair, é o controle de corpo inteiro. Nesta aula você manda comandos de alto nível ao G1 simulado e vê o que ele executa e o que recusa antes de mexer.",
   "objetivo": "mandar comandos de alto nível a um controle de corpo inteiro simulado e ver quais ele executa e quais recusa.",
   "competencias": [
     "ligar-vla-ao-controle-de-corpo-inteiro",
@@ -76,7 +76,7 @@
         },
         {
           "icone": "camadas",
-          "titulo": "WBC",
+          "titulo": "S0 · WBC",
           "sub": "pernas + braços",
           "itens": [
             {
@@ -96,7 +96,7 @@
               "t": "executado, robô de pé"
             }
           ],
-          "detalhe": "O mesmo S0 das aulas anteriores. O comando só conta como executado se a mão chegou ao alvo e o robô continua de pé."
+          "detalhe": "O mesmo PD do motor das aulas anteriores, embaixo do S0. O comando só conta como executado se a mão chegou ao alvo e o robô continua de pé."
         }
       ],
       "estilo": "escada",

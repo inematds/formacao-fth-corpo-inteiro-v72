@@ -5,7 +5,7 @@
   "titulo": "Mãos: o problema que ainda não está resolvido",
   "titulo_curto": "Mãos",
   "minutos": 15,
-  "lead": "O corpo inteiro anda, equilibra e imita; na hora de pegar, tudo depende de uma mão que tem uma fração dos graus de liberdade da nossa e quase nenhum tato. Nesta aula você conta as juntas da mão do G1 no modelo, compara com duas mãos de pesquisa e mede um aperto simulado, sabendo exatamente o que esse número é e o que não é.",
+  "lead": "O corpo inteiro anda, equilibra e imita; na hora de pegar, tudo depende de uma mão com poucos graus de liberdade e quase nenhum tato. Nesta aula você conta as juntas da mão do G1 no modelo, compara com duas mãos de pesquisa e mede um aperto simulado, sabendo o que esse número é e o que não é.",
   "objetivo": "contar os graus de liberdade da mão do G1, comparar com outras mãos e medir um aperto simulado no modelo.",
   "competencias": [
     "ler-mao-no-mjcf",
@@ -146,6 +146,10 @@
           {
             "rot": "Erro comum: modelo sem mãos",
             "html": "<pre>modelo: unitree_g1/scene.xml · nu=29\nERRO: este modelo não tem juntas de mão. No G1, use unitree_g1/scene_with_hands.xml.\nsaída: 1</pre><p>O scene.xml do G1 é a versão de 29 GDL, sem mãos. Para as mãos, use unitree_g1/scene_with_hands.xml.</p>"
+          },
+          {
+            "rot": "Só contar + Allegro",
+            "html": "<pre>2\nmão avulsa: 16 GDL · 16 atuadores</pre><p>Duas mãos de 7 GDL no G1; a Allegro (wonik_allegro) tem 16 GDL e 16 atuadores.</p>"
           }
         ]
       }

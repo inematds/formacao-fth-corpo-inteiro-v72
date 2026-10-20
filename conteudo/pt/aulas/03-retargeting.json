@@ -5,7 +5,7 @@
   "titulo": "Retargeting: do esqueleto humano ao robô",
   "titulo_curto": "Retargeting com o GMR",
   "minutos": 15,
-  "lead": "Uma pessoa tem 1,70 m, ombros largos e juntas que o robô não tem; o G1 tem 1,32 m e 29 motores com limites. Retargeting é a conta que transforma um no outro, quadro a quadro, sem quebrar nenhum limite. Nesta aula você instala o GMR num ambiente próprio, leva 10 s de boxe para o G1 e confere cada quadro contra os limites das juntas.",
+  "lead": "Uma pessoa tem 1,70 m e juntas que o robô não tem; o G1 tem 1,32 m e, no modelo do Menagerie, 29 juntas com limites. Retargeting é a conta que leva um ao outro, quadro a quadro. Nesta aula você instala o GMR num ambiente próprio, leva 10 s de boxe para o G1 e confere cada quadro nos limites das juntas.",
   "objetivo": "levar um clipe humano para o G1 com o GMR num ambiente próprio e conferir que nenhum quadro passa do limite das juntas.",
   "competencias": [
     "fazer-retargeting",
@@ -119,7 +119,7 @@
           "titulo": "setup.py",
           "sub": "× código",
           "texto": [
-            "No commit bb1bbe4 (02/04/2026), o setup.py pede proxqp, smplx e redis, mas o retargeting de BVH usa o solver daqp (padrão no código) e não precisa dos outros.",
+            "No commit bb1bbe4 (02/04/2026), o setup.py pede, entre outros, proxqp, smplx e redis, mas o retargeting de BVH usa o solver daqp (padrão no código) e não precisa dos outros.",
             "Quando código e lista de dependências divergem, vale o código: o curso instala o GMR com --no-deps e fixa à mão só o que roda."
           ],
           "exemplo": {
@@ -140,7 +140,7 @@
     {
       "tipo": "codigo",
       "titulo": "Instalar o GMR no .venv-gmr",
-      "sub": "Acrescenta ao clone do GMR só o código e o modelo do G1 (sparse-checkout add), cria o segundo ambiente e fixa as versões testadas. Primeira vez: o torch de CPU tem algumas centenas de MB.",
+      "sub": "Acrescenta ao clone do GMR só o código e o modelo do G1 (sparse-checkout add), cria o segundo ambiente e fixa as versões testadas. Primeira vez: o ambiente inteiro ocupou 1,2 GB numa bancada nova, quase tudo do torch de CPU (medido em 19/10/2026).",
       "blocos": [
         {
           "rot": "Terminal · ambiente do GMR",
@@ -205,7 +205,7 @@
           "titulo": "E2 · Retargeting sem violação",
           "min": "5 min",
           "texto": "Rode o retargeting dos 10 s de boxe.",
-          "pronto": "<code>python3 kit/retarget.py [clipe do GMR] --fim 1200 --nome boxe_g1</code> → <code>violações de limite (Menagerie, folga 0.5°): 0</code> e <code>saída: 0</code>."
+          "pronto": "<code>python3 kit/retarget.py ~/fth/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh --fim 1200 --nome boxe_g1</code> → <code>violações de limite (Menagerie, folga 0.5°): 0</code> e <code>saída: 0</code>."
         },
         {
           "id": "e3",

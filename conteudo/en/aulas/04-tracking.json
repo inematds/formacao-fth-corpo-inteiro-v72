@@ -1,0 +1,285 @@
+{
+  "slug": "tracking",
+  "num": 4,
+  "menu": "Tracking",
+  "titulo": "A policy that imitates any motion",
+  "titulo_curto": "Motion tracking",
+  "minutos": 15,
+  "lead": "Having the motion in the robot's format is not the same as making it perform it. If you send only the angles to the motors, it imitates for a second and falls: nobody is handling balance. In this lesson you play the boxing in MuJoCo with and without a gantry, measure each joint's error, and see what BeyondMimic, GMT and SONIC solve.",
+  "objetivo": "play the motion in MuJoCo with and without a gantry and explain why a tracking policy is needed.",
+  "competencias": [
+    "reproduzir-movimento-em-simulacao",
+    "medir-erro-de-rastreio",
+    "explicar-politica-de-rastreio"
+  ],
+  "aprende": [
+    {
+      "icone": "play",
+      "t": "Play a reference with the joints' PD"
+    },
+    {
+      "icone": "grafico",
+      "t": "Tracking error in degrees, per joint"
+    },
+    {
+      "icone": "robo",
+      "t": "Why following angles doesn't balance the robot"
+    },
+    {
+      "icone": "cerebro",
+      "t": "BeyondMimic (now in mjlab), GMT and SONIC: what each one does"
+    }
+  ],
+  "hero_alt": "Humanoid robot with a dark visor in a boxing guard in a lab, one fist in a slight motion blur and a safety cable overhead.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "From reference to standing robot",
+      "sub": "Click each block.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Reference",
+          "sub": "qpos per frame",
+          "itens": [
+            {
+              "icone": "relogio",
+              "t": "120 Hz, interpolated"
+            }
+          ],
+          "detalhe": "The retargeted motion from lesson 3: 1200 frames at 120 Hz. The simulation runs at 500 Hz, so the kit interpolates the reference between frames (angles in a straight line; quaternion normalized)."
+        },
+        {
+          "icone": "cerebro",
+          "titulo": "Policy",
+          "sub": "learned tracking",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "camadas",
+              "t": "observes the state and the future reference"
+            }
+          ],
+          "detalhe": "What the kit is missing: a network trained with PPO in thousands of simulations that looks at the robot's state and the next reference frames and decides the joint targets that keep it balanced. SONIC looks at 10 future frames at 20 ms (about 200 ms) in the default checkpoint."
+        },
+        {
+          "icone": "chip",
+          "titulo": "PD",
+          "sub": "500 Hz",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "kp=500 on the Menagerie G1"
+            }
+          ],
+          "detalhe": "Each of the G1's position actuators pulls the joint toward the requested angle. In the kit, the requested angle is the reference itself: this is \"replay\", not tracking."
+        },
+        {
+          "icone": "robo",
+          "titulo": "Physics",
+          "sub": "contact, gravity",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "without a gantry, it falls"
+            }
+          ],
+          "detalhe": "With the pelvis attached to a virtual gantry that follows the reference, the joints follow with small error. Unattached, the body responds to gravity and to foot contact, and the replay corrects nothing."
+        }
+      ],
+      "legenda": "Virtual gantry = the base is put back at the reference pose at every step, like a robot hanging in the first test."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Who solves motion tracking in 2026",
+      "sub": "Click on each one. All of them train on a GPU; here they are shown, not run.",
+      "passos": [
+        {
+          "titulo": "BeyondMimic",
+          "sub": "now in mjlab",
+          "texto": [
+            "Tracks dynamic motions (spinning, running, cartwheel) and uses a guided diffusion policy for tasks without specific training (arXiv 2508.08241, Aug/2025). The whole_body_tracking repository pins Isaac Lab 2.1.0.",
+            "As of 10/15/2026, that repository's README says it has been retired: BeyondMimic tracking continues in mjlab, in the Mjlab-Tracking-Flat-Unitree-G1 task."
+          ]
+        },
+        {
+          "titulo": "GMT",
+          "sub": "reported",
+          "texto": [
+            "General tracking with adaptive sampling (easy × hard motions) and a mixture-of-experts layer (arXiv 2506.14770, Jun/2025). Reported by the course research, based on the paper's abstract."
+          ]
+        },
+        {
+          "titulo": "SONIC",
+          "sub": "open weights",
+          "texto": [
+            "From NVIDIA: 42M parameters, trained on more than 100M frames (about 700 h). It has three public checkpoints for the G1 (original, low latency, and v1.1 from 07/23/2026), 64-dimension tokens, and a 50 Hz controller.",
+            "Deployment in C++ and TensorRT; code under Apache-2.0, weights under the NVIDIA Open Model License (commercial use with attribution)."
+          ],
+          "exemplo": {
+            "rot": "Format",
+            "texto": "GMR exports CSV for BeyondMimic, whose imitation pipeline mjlab adopted. Your .npz from lesson 3 is the same data in the kit's own format."
+          }
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Replay with the pelvis on the gantry",
+      "sub": "The joints receive the reference at each 2 ms step; the base is placed back at the reference pose. The error is the difference between the measured angle and the reference angle at the next step.",
+      "blocos": [
+        {
+          "rot": "Terminal · with gantry",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/reproduzir.py $F/movimentos/boxe_g1.npz; echo \"saída: $?\""
+        },
+        {
+          "rot": "Excerpt · kit/reproduzir.py",
+          "icone": "arquivo",
+          "conteudo": "        if a.modo == \"portico\":\n            fth.portico(d, r[:7])\n        d.ctrl[mot] = r[adr]\n        mujoco.mj_step(m, d)"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>movimento: boxe_g1.npz · 1200 quadros a 120 Hz · 10.0 s · modo portico\npassos de física: 4995 (2 ms cada)\nerro médio de junta: 0.3° · pior junta: right_shoulder_roll_joint (1.9°)\nqueda: não\nsaída: 0</pre><p>Average error of 0.3°: with the body supported, the PD handles it. The right shoulder, which moves the most in boxing, is the worst.</p>"
+          },
+          {
+            "rot": "Without the gantry",
+            "html": "<pre>movimento: boxe_g1.npz · 1200 quadros a 120 Hz · 10.0 s · modo livre\npassos de física: 839 (2 ms cada)\nerro médio de junta: 0.5° · pior junta: right_shoulder_roll_joint (2.8°)\nqueda: sim, em t = 1.68 s\nsaída: 0</pre><p>The same replay, unsupported: it falls at 1.68 s with the joint error still small. Following the angles is not balancing. That is what the tracking policy learns.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "What is used at scale (shown)",
+      "sub": "Command from the mjlab README (commit 8bb2bc9, 10/18/2026). It requires an NVIDIA GPU and a WandB account to log the motions; it was not run here and is not a prerequisite for the course.",
+      "blocos": [
+        {
+          "rot": "Shown · mjlab, motion tracking on the G1 (not run here)",
+          "icone": "nuvem",
+          "conteudo": "# github.com/mujocolab/mjlab · README (commit 8bb2bc9, 18/10/2026)\nuv run train Mjlab-Tracking-Flat-Unitree-G1 --registry-name your-org/motions/motion-name --env.scene.num-envs 4096\nuv run play Mjlab-Tracking-Flat-Unitree-G1 --wandb-run-path your-org/mjlab/run-id"
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "Measure with and without the gantry.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · With gantry",
+          "min": "5 min",
+          "texto": "Run the boxing replay with the pelvis on the gantry.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_g1.npz | tail -2</code> → <code>erro médio de junta: 0.3°</code> and <code>queda: não</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Without gantry",
+          "min": "5 min",
+          "texto": "Run with --modo livre and note the moment of the fall.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_g1.npz --modo livre | tail -1</code> → <code>queda: sim, em t = 1.68 s</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · The second excerpt",
+          "min": "5 min",
+          "texto": "If you did E3 from lesson 3, replay boxe_trecho2.npz with the gantry and compare the average error and the worst joint.",
+          "pronto": "<code>python3 kit/reproduzir.py ~/fth/movimentos/boxe_trecho2.npz | grep erro</code> → <code>erro médio de junta: 1.5°</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after your answer.",
+      "perguntas": [
+        {
+          "p": "Without the gantry, the joint error is small and the G1 still falls. Why?",
+          "opcoes": [
+            "Because the G1's PD is too weak to follow the boxing.",
+            "Because the reference has limit violations in the legs in several frames of the boxing.",
+            "Because MuJoCo does not simulate the contact of the feet with the ground.",
+            "Because nobody is deciding the angles that keep the balance."
+          ],
+          "certa": 3,
+          "explica": "The replay follows the angles of a human, not the forces that keep the G1 standing. The tracking policy learns to deviate a little from the reference so it does not fall.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "Where does BeyondMimic tracking live today, according to the README of the original repository?",
+          "opcoes": [
+            "In mjlab, in the Mjlab-Tracking-Flat-Unitree-G1 task.",
+            "In a PyPI package called beyondmimic, which replaced the repository.",
+            "In GMR, which started training tracking policies.",
+            "In the whole_body_tracking repository, maintained with Isaac Lab 3.0."
+          ],
+          "certa": 0,
+          "explica": "whole_body_tracking (which pins Isaac Lab 2.1.0) was retired; the README points to the mjlab tracking task (10/15/2026). GMR only does the retargeting.",
+          "ref": "passos"
+        },
+        {
+          "p": "What does the kit's virtual gantry do?",
+          "opcoes": [
+            "It turns off gravity in the simulation during the replay.",
+            "It puts the robot's base back at the reference pose on every step.",
+            "It welds the robot's feet to the floor.",
+            "It raises the motors' kp until the robot goes rigid."
+          ],
+          "certa": 1,
+          "explica": "It is the simulated equivalent of the suspended robot: the body is held up, and you measure only whether the joints follow along. In FTH course 4, the real gantry shows up in the first-test procedure.",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "Replay",
+          "texto": "Following the angles works with the body supported and fails when it is free."
+        },
+        {
+          "t": "Policy",
+          "texto": "The tracking policy looks at the state and the future reference and takes care of balance."
+        },
+        {
+          "t": "Where to train",
+          "texto": "mjlab (with the BeyondMimic pipeline) or a ready-made SONIC, on a GPU."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Going further",
+      "links": [
+        {
+          "t": "mjlab: motion tracking task",
+          "href": "https://github.com/mujocolab/mjlab",
+          "icone": "git"
+        },
+        {
+          "t": "BeyondMimic: whole_body_tracking (retired)",
+          "href": "https://github.com/HybridRobotics/whole_body_tracking",
+          "icone": "git"
+        },
+        {
+          "t": "SONIC: weights and model card",
+          "href": "https://huggingface.co/nvidia/GEAR-SONIC",
+          "icone": "cerebro"
+        },
+        {
+          "t": "FTH 2: from simulator to floor (sim2sim and ladder)",
+          "href": "https://inematds.github.io/formacao-fth-sim2real-v72/en/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

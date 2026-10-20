@@ -1,0 +1,290 @@
+{
+  "slug": "maos",
+  "num": 6,
+  "menu": "Manos",
+  "titulo": "Manos: el problema que aún no está resuelto",
+  "titulo_curto": "Manos",
+  "minutos": 15,
+  "lead": "El cuerpo completo camina, se equilibra e imita; a la hora de agarrar, todo depende de una mano con pocos grados de libertad y casi nada de tacto. En esta clase cuentas las articulaciones de la mano del G1 en el modelo, la comparas con dos manos de investigación y mides un agarre simulado, sabiendo qué es ese número y qué no es.",
+  "objetivo": "contar los grados de libertad de la mano del G1, compararla con otras manos y medir un agarre simulado en el modelo.",
+  "competencias": [
+    "ler-mao-no-mjcf",
+    "comparar-maos-de-robo",
+    "interpretar-forca-simulada"
+  ],
+  "aprende": [
+    {
+      "icone": "lista",
+      "t": "La Dex3-1 del G1: 7 GDL por mano (pulgar 3, índice 2, medio 2)"
+    },
+    {
+      "icone": "chip",
+      "t": "Torque declarado en el MJCF y qué limita"
+    },
+    {
+      "icone": "grafico",
+      "t": "Un agarre simulado: fuerza de contacto por dedo"
+    },
+    {
+      "icone": "lupa",
+      "t": "Manos de investigación (LEAP, Shadow) y las del mercado, con fuente"
+    }
+  ],
+  "hero_alt": "Mano robótica gris oscura de tres dedos apretando un pequeño cilindro sobre la mesa de trabajo, con cables finos y luz lateral.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "De la articulación al objeto",
+      "sub": "Haz clic en cada bloque.",
+      "nos": [
+        {
+          "icone": "lista",
+          "titulo": "GDL",
+          "sub": "7 por mano",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "pulgar 3, índice 2, medio 2"
+            }
+          ],
+          "detalhe": "La Dex3-1, mano del G1 EDU, tiene 7 grados de libertad (hecho, página del G1 leída el 19/10/2026). El modelo scene_with_hands.xml de Menagerie trae exactamente esas 7 articulaciones por mano: el robot pasa de 29 a 43 actuadores."
+        },
+        {
+          "icone": "chip",
+          "titulo": "Actuador",
+          "sub": "1,4–2,45 N·m",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "posición, kp=500"
+            }
+          ],
+          "detalhe": "Cada articulación de la mano tiene un actuador de posición con el torque limitado por el actuatorfrcrange del MJCF: 2,45 N·m en la base del pulgar y 1,4 N·m en las demás. Ese tope es lo que limita el apriete."
+        },
+        {
+          "icone": "alvo",
+          "titulo": "Contacto",
+          "sub": "fuerza por dedo",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "grafico",
+              "t": "N en cada falange"
+            }
+          ],
+          "detalhe": "Cuando el dedo toca, la fuerza sobre el objeto depende del torque y de dónde cae el contacto: cerca de la articulación, el mismo torque se convierte en más fuerza. Por eso los tres dedos dan números tan distintos en el kit."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "Tacto",
+          "sub": "opcional",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "no está en el modelo"
+            }
+          ],
+          "detalhe": "La Dex3-1 tiene una matriz táctil opcional (hecho). El modelo del Menagerie no simula el tacto: el robot simulado conoce la fuerza de contacto porque el simulador la calcula, el robot real solo la conoce si tiene el sensor."
+        }
+      ],
+      "legenda": "Pocos grados de libertad y poco tacto: aquí es donde las tareas finas todavía fallan."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Las manos que vas a encontrar",
+      "sub": "Haz clic en cada grupo.",
+      "passos": [
+        {
+          "titulo": "En los humanoides",
+          "sub": "hecho",
+          "texto": [
+            "Unitree Dex3-1: 7 GDL, táctil opcional, en el paquete del G1 EDU (hecho, unitree.com/g1).",
+            "En el modelo: las dos manos del G1 del Menagerie, con límites y torque declarados."
+          ]
+        },
+        {
+          "titulo": "De investigación",
+          "sub": "en el Menagerie",
+          "texto": [
+            "LEAP Hand: 16 GDL, un actuador por articulación. Shadow Hand: 24 articulaciones y 20 actuadores, porque algunos dedos tienen articulaciones acopladas por tendón.",
+            "Los dos modelos están en el Menagerie: basta con agregar la carpeta al sparse-checkout."
+          ]
+        },
+        {
+          "titulo": "Del mercado",
+          "sub": "reportado",
+          "texto": [
+            "Inspire RH56H1: 6 actuadores y 11 articulaciones, 260 puntos táctiles, unos US$ 4.500–5.780 en reventa (reportado). Sharpa Wave: 22 GDL, más de 1.000 sensores por punta de dedo, unos US$ 20 mil (reportado, CES 2026).",
+            "La mano del Optimus no tiene datos verificados por la investigación de la formación. El precio de una mano varía según la versión y el revendedor; nada de esto es una recomendación de compra."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Contar las articulaciones y apretar un cilindro",
+      "sub": "El mao.py cuenta las articulaciones de cada mano en el MJCF, lee el torque declarado y cierra la mano derecha sobre un cilindro fijo de 4 cm, con la pelvis en el pórtico. Lee la fuerza normal de contacto de cada dedo después de 2 s.",
+      "blocos": [
+        {
+          "rot": "Terminal · la mano del G1",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/mao.py; echo \"saída: $?\""
+        },
+        {
+          "rot": "Fragmento · kit/mao.py",
+          "icone": "arquivo",
+          "conteudo": "FECHAR = {\"right_hand_index_0_joint\": 1.57, \"right_hand_index_1_joint\": 1.75,\n          \"right_hand_middle_0_joint\": 1.57, \"right_hand_middle_1_joint\": 1.75,\n          \"right_hand_thumb_0_joint\": 0.0, \"right_hand_thumb_1_joint\": -1.05, \"right_hand_thumb_2_joint\": -1.75}"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>modelo: unitree_g1/scene_with_hands.xml · nu=43\nmão left: 7 GDL (polegar 3, indicador 2, médio 2)\nmão right: 7 GDL (polegar 3, indicador 2, médio 2)\ntorque declarado por junta da mão: 1.40 a 2.45 N·m (actuatorfrcrange)\naperto simulado num cilindro fixo de 4 cm (mão direita, 2 s):\n  polegar  :  18.6 N\n  indicador:  53.0 N\n  médio    :  81.4 N\ndedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô\nsaída: 0</pre><p>7 GDL por mano, como en la ficha de la Dex3-1. Las fuerzas son del modelo: el cilindro es fijo, el PD empuja hasta el límite de torque, y el dedo medio agarra cerca de la articulación. No es la fuerza de agarre del robot, que Unitree no publica en la página leída.</p>"
+          },
+          {
+            "rot": "Error común: modelo sin manos",
+            "html": "<pre>modelo: unitree_g1/scene.xml · nu=29\nERRO: este modelo não tem juntas de mão. No G1, use unitree_g1/scene_with_hands.xml.\nsaída: 1</pre><p>El scene.xml del G1 es la versión de 29 GDL, sin manos. Para las manos, usa unitree_g1/scene_with_hands.xml.</p>"
+          },
+          {
+            "rot": "Solo contar + Allegro",
+            "html": "<pre>2\nmão avulsa: 16 GDL · 16 atuadores</pre><p>Dos manos de 7 grados de libertad en el G1; la Allegro (wonik_allegro) tiene 16 grados de libertad y 16 actuadores.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Dos manos de investigación para comparar",
+      "sub": "Agrega las carpetas de la LEAP Hand y la Shadow Hand a tu Menagerie (sparse-checkout add, sin descargar el resto) y cuenta las articulaciones.",
+      "blocos": [
+        {
+          "rot": "Terminal · LEAP y Shadow",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/mujoco_menagerie && git sparse-checkout add leap_hand shadow_hand\ncd $F/corpo-inteiro && . $F/.venv/bin/activate\nfor h in leap_hand/right_hand.xml shadow_hand/right_hand.xml; do python3 kit/mao.py --modelo $h | tail -1 | sed \"s#^#$h: #\"; done"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>leap_hand/right_hand.xml: mão avulsa: 16 GDL · 16 atuadores\nshadow_hand/right_hand.xml: mão avulsa: 24 GDL · 20 atuadores</pre><p>En la Shadow, 24 articulaciones para 20 actuadores: cuatro articulaciones acompañan a otras por acoplamiento. Más GDL no es lo mismo que más motores.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Contar, comparar, apretar.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · La mano del G1",
+          "min": "5 min",
+          "texto": "Ejecuta el mao.py y verifica los 7 GDL de las dos manos.",
+          "pronto": "<code>python3 kit/mao.py | tail -1</code> → <code>dedos tocando o objeto: 3/3 · estimativa do modelo, não medida no robô</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Solo contar",
+          "min": "3 min",
+          "texto": "Ejecuta solo el conteo, sin la simulación del apriete.",
+          "pronto": "<code>python3 kit/mao.py --so-contar | grep -c \"7 GDL\"</code> → <code>2</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Otra mano",
+          "min": "10 min",
+          "texto": "Agrega wonik_allegro al sparse-checkout y cuenta las articulaciones de su mano derecha.",
+          "pronto": "<code>python3 kit/mao.py --modelo wonik_allegro/right_hand.xml | tail -1</code> → una línea <code>mão avulsa: [N] GDL · [N] atuadores</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "El kit midió 81 N en el dedo medio. ¿Cómo puede ese número ir a una ficha?",
+          "opcoes": [
+            "Como fuerza de agarre de la Dex3-1, en la columna del fabricante.",
+            "Como estimación del modelo, con las condiciones del ensayo.",
+            "Como medida del robot real, siempre que se cite el commit del Menagerie usado.",
+            "En ningún lugar: la fuerza de contacto no sale del simulador."
+          ],
+          "certa": 1,
+          "explica": "Es lo que el MJCF y el simulador producen en esas condiciones. Unitree no publica fuerza de agarre en la página leída; llamar al número medida del robot sería inventar.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "La Shadow Hand tiene 24 articulaciones y 20 actuadores. ¿Qué significa eso?",
+          "opcoes": [
+            "Que cuatro articulaciones están rotas en el modelo del Menagerie.",
+            "Que MuJoCo solo acepta 20 actuadores por modelo de mano.",
+            "Que algunas articulaciones están acopladas y siguen a otras, sin motor propio.",
+            "Que cuatro articulaciones son de la base y no forman parte de la mano en sí."
+          ],
+          "certa": 2,
+          "explica": "Las articulaciones acopladas (por tendón, en el modelo) se mueven junto con otras. Los grados de libertad no son el número de motores.",
+          "ref": "passos"
+        },
+        {
+          "p": "¿Por qué la fuerza simulada es bastante distinta entre el pulgar, el índice y el medio?",
+          "opcoes": [
+            "El contacto cae a distancias diferentes de la articulación.",
+            "Porque el pulgar del modelo no tiene actuador de posición.",
+            "Porque la simulación es aleatoria y cambia cada vez que se ejecuta.",
+            "Porque el cilindro queda más cerca del índice por un error de posición del kit."
+          ],
+          "certa": 0,
+          "explica": "Fuerza = torque / brazo de palanca: un contacto cerca de la articulación da más fuerza con el mismo límite de 1,4 N·m. La simulación es determinista (dos capturas iguales).",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "7 grados de libertad",
+          "texto": "La Dex3-1 del G1 tiene 7 articulaciones por mano, y el modelo también."
+        },
+        {
+          "t": "Fuerza",
+          "texto": "La fuerza de agarre del simulador es una estimación del modelo, dicha como tal."
+        },
+        {
+          "t": "Cuello de botella",
+          "texto": "Pocos grados de libertad y poco tacto: es donde las tareas finas todavía fallan."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "Unitree G1 (página del fabricante)",
+          "href": "https://www.unitree.com/g1",
+          "icone": "robo"
+        },
+        {
+          "t": "MuJoCo Menagerie: modelos de manos",
+          "href": "https://github.com/google-deepmind/mujoco_menagerie",
+          "icone": "git"
+        },
+        {
+          "t": "FTH 0, clase 4: actuadores y torque",
+          "href": "https://inematds.github.io/formacao-fth-anatomia-v72/es/aulas/atuadores/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

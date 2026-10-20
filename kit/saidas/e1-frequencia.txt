@@ -1,2 +1,2 @@
-ERRO: S1 (30 Hz) e S2 (5 Hz) precisam dividir o passo de 500 Hz.
+ERRO: S0 (30 Hz) e tarefa (5 Hz) precisam dividir o passo de 500 Hz.
 saída: 1

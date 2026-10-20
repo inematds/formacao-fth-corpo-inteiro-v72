@@ -1,0 +1,312 @@
+{
+  "slug": "wbc",
+  "num": 1,
+  "menu": "Capas",
+  "titulo": "Del caminar al hacer: whole-body control",
+  "titulo_curto": "Whole-body control",
+  "minutos": 15,
+  "lead": "Caminar es el comienzo. Para tomar una caja, saludar u obedecer a un VLA, el humanoide necesita coordinar piernas, torso y brazos al mismo tiempo, sin caerse. En esta clase montas el banco de trabajo del curso y cuentas, en un bucle de simulación, las tres capas que hacen eso: quién decide, quién coordina el cuerpo y quién mueve cada articulación.",
+  "objetivo": "montar la mesa de trabajo y contar las tres capas de un humanoide de cuerpo completo (VLA, S0 y PD del motor) con la frecuencia de cada una.",
+  "competencias": [
+    "montar-a-bancada-de-corpo-inteiro",
+    "separar-camadas-de-controle",
+    "ler-frequencias-de-laco"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "Las tres capas: el VLA (S2 + S1) decide qué, el S0 coordina el cuerpo, el PD mueve el motor"
+    },
+    {
+      "icone": "relogio",
+      "t": "Por qué cada capa corre a una frecuencia distinta"
+    },
+    {
+      "icone": "robo",
+      "t": "El paradigma de 2025–26: una policy que hace motion tracking de movimiento humano"
+    },
+    {
+      "icone": "terminal",
+      "t": "El banco de trabajo en ~/fth reutilizado del curso 0"
+    }
+  ],
+  "hero_alt": "Robot humanoide industrial de visor oscuro extendiendo la mano hacia una caja sobre la mesa, sujeto por un cable flojo a un pórtico.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Quién decide, quién coordina, quién mueve",
+      "sub": "Haz clic en cada bloque.",
+      "nos": [
+        {
+          "icone": "cerebro",
+          "titulo": "VLA · S2+S1",
+          "sub": "qué",
+          "itens": [
+            {
+              "icone": "chat",
+              "t": "VLA, operador, guion"
+            }
+          ],
+          "detalhe": "La capa que entiende la tarea y dice qué hacer: \"toma la caja\", \"sigue mi brazo\". En el Helix 02 de Figure tiene dos partes: el S2, un modelo de visión y lenguaje lento (en el Helix original, 7–9 Hz), y el S1, que emite objetivos a 200 Hz. En este curso es un guion, un operador simulado o un archivo de comandos, a 5 Hz."
+        },
+        {
+          "icone": "camadas",
+          "titulo": "S0 · cuerpo",
+          "sub": "50 Hz–1 kHz",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "objetivos de articulación para el cuerpo completo"
+            }
+          ],
+          "detalhe": "El whole-body control: convierte el \"qué\" en ángulos para todas las articulaciones al mismo tiempo, manteniendo el equilibrio. En el Helix 02 es un controlador aprendido a 1 kHz; SONIC corre a 50 Hz (README de GR00T-WholeBodyControl). En el kit, una IK de los brazos a 50 Hz con las piernas en la pose de pie. Es el tema de este curso."
+        },
+        {
+          "icone": "chip",
+          "titulo": "PD del motor",
+          "sub": "500 Hz–1 kHz",
+          "itens": [
+            {
+              "icone": "relogio",
+              "t": "PD de articulación + física"
+            }
+          ],
+          "detalhe": "El lazo más rápido: cada motor sigue el ángulo pedido con un control PD. En el robot corre en el SDK del fabricante; en MuJoCo, es el actuador de posición del G1 (kp=500) en cada paso de 2 ms."
+        },
+        {
+          "icone": "robo",
+          "titulo": "Cuerpo",
+          "sub": "G1, 29 GDL",
+          "itens": [
+            {
+              "icone": "grafico",
+              "t": "el estado medido vuelve hacia arriba"
+            }
+          ],
+          "detalhe": "El resultado: articulaciones, IMU y contacto de los pies vuelven a las capas de arriba en cada ciclo. Si el S0 falla en el equilibrio, ningún PD rápido salva al robot (la clase 4 lo muestra)."
+        }
+      ],
+      "volta": "estado medido",
+      "legenda": "Nombres S2/S1/S0 como en el Helix 02 de Figure (27/01/2026): el VLA es S2 + S1, el whole-body control es el S0. El VLA en sí es tema del curso vla-v72."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Qué cambió de 2024 a 2026",
+      "sub": "Toca cada etapa.",
+      "passos": [
+        {
+          "titulo": "Antes",
+          "sub": "a mano",
+          "texto": [
+            "El control de humanoides se armaba en bloques escritos a mano: planificador de pasos, trayectoria del pie en el aire, pierna de apoyo y equilibrio por ZMP o MPC (modelo predictivo).",
+            "Funciona y es interpretable, pero cada habilidad nueva pide ingeniería nueva. La clase 6 del curso 0 de la FTH mostró el centro de masa y el polígono de apoyo que están detrás de esto."
+          ]
+        },
+        {
+          "titulo": "2025–26",
+          "sub": "rastrear al humano",
+          "texto": [
+            "El camino abierto cambió: captura o video humano → retargeting (GMR) → una policy de motion tracking entrenada con PPO en miles de simulaciones (BeyondMimic, GMT, SONIC) → sim2sim → robot.",
+            "Una sola policy imita cualquier movimiento de referencia y sirve de base para la teleoperación y para el VLA. Figure describió lo mismo en el Helix 02: un controlador de 10M de parámetros a 1 kHz, entrenado con más de 1.000 h de movimiento humano, que reemplazó 109.504 líneas de C++."
+          ],
+          "exemplo": {
+            "rot": "Salvedad",
+            "texto": "MPC × RL: la investigación de la formación no encontró una comparación cuantitativa independiente en 2026. MPC sigue fuerte donde se exige garantía; RL es la práctica dominante en los repositorios abiertos."
+          }
+        },
+        {
+          "titulo": "Desacoplado",
+          "sub": "piernas × brazos",
+          "texto": [
+            "Un punto medio muy usado: RL en las piernas (caminar y equilibrar) e IK en los brazos (alcanzar). Es el WBC desacoplado del repositorio GR00T-WholeBodyControl, usado bajo GR00T N1.5 y N1.6.",
+            "El kit de este curso sigue esa división: piernas en la pose \"stand\" del modelo, brazos por IK."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Armar el banco de trabajo (reutiliza el del curso 0)",
+      "sub": "Si hiciste el curso 0, el venv y el Menagerie ya existen y solo el clone de este curso es nuevo. Si no lo hiciste, el mismo bloque crea todo. El Menagerie queda fijado en el commit probado.",
+      "blocos": [
+        {
+          "rot": "Terminal · preparar ~/fth",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; mkdir -p $F && cd $F\n[ -d .venv ] || python3.12 -m venv .venv\n. .venv/bin/activate && pip install -q mujoco==3.16.0 numpy\n[ -d corpo-inteiro ] || git clone -q --depth 1 https://github.com/inematds/formacao-fth-corpo-inteiro-v72 corpo-inteiro\n[ -d mujoco_menagerie ] || git clone -q --filter=blob:none --sparse https://github.com/google-deepmind/mujoco_menagerie\ncd mujoco_menagerie && git sparse-checkout add unitree_g1\ngit checkout -q 62ab00f && git log -1 --format='menagerie %h (%ad)' --date=short\npython3 -c \"import mujoco, numpy; print('mujoco', mujoco.__version__, '· numpy', numpy.__version__)\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>menagerie 62ab00f (2026-10-15)\nmujoco 3.16.0 · numpy 2.5.4</pre><p>Dos líneas y ningún error. Una versión diferente de MuJoCo puede cambiar el último decimal de los números de las próximas clases: fija la versión.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Contar las capas en un lazo de 2 segundos",
+      "sub": "El hierarquia.py corre el G1 de pie durante 2 s. Cada 200 ms (tarea) cambia el objetivo de la mano derecha; cada 20 ms (S0) rehace la IK del brazo; cada 2 ms da un paso de física con el PD de los motores.",
+      "blocos": [
+        {
+          "rot": "Terminal · las tres capas",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/hierarquia.py; echo \"saída: $?\""
+        },
+        {
+          "rot": "Fragmento · kit/hierarquia.py",
+          "icone": "arquivo",
+          "conteudo": "        if i % k2 == 0:  # tarea (S2+S1 en un VLA): decide \"qué\" (aquí, un guion de objetivos)\n            alvo = alvos[n2 % len(alvos)]\n            n2 += 1\n        if i % k1 == 0:  # S0: whole-body control, decide \"cómo\" llega el cuerpo hasta allí"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>simulado: 2 s · passo de física 2 ms\ntarefa (VLA: S2+S1)      :   10 chamadas (5 Hz)\nS0 corpo inteiro (IK)    :  100 chamadas (50 Hz)\nPD do motor + física     : 1000 passos   (500 Hz)\nmão direita a 0.7 cm do último alvo · pelve a 0.79 m · de pé: sim\n3 camadas\nsaída: 0</pre><p>1000 pasos del PD por 100 decisiones del S0 y 10 de la tarea. La mano termina a menos de 1 cm del último objetivo y el robot sigue de pie.</p>"
+          },
+          {
+            "rot": "Error común: frecuencia que no divide",
+            "html": "<pre>ERRO: S0 (30 Hz) e tarefa (5 Hz) precisam dividir o passo de 500 Hz.\nsaída: 1</pre><p>El lazo de abajo manda en el reloj: las capas de arriba corren cada N pasos. 30 Hz no cabe en 500 Hz un número entero de veces. Usa divisores (50, 100, 250 Hz).</p>"
+          },
+          {
+            "rot": "S0 a 100 Hz",
+            "html": "<pre>S0 corpo inteiro (IK)    :  200 chamadas (100 Hz)</pre><p>El doble de decisiones de cuerpo en el mismo tiempo. El Helix 02 lleva esto al extremo: el S0 aprendido corre a 1 kHz.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Banco de trabajo, lazo y frecuencias.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Banco de trabajo listo",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque de preparación. Si ya tenías ~/fth del curso 0, confirma que no se reinstaló nada además del clone de este curso.",
+          "pronto": "<code>cd ~/fth/mujoco_menagerie && git log -1 --format=%h</code> → <code>62ab00f</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Las tres capas",
+          "min": "5 min",
+          "texto": "Ejecuta hierarquia.py y anota cuántas veces se llamó cada capa.",
+          "pronto": "<code>python3 kit/hierarquia.py; echo \"saída: $?\"</code> → <code>3 camadas</code> y <code>saída: 0</code>, con <code>1000 passos</code> en el PD del motor."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · S0 más rápido",
+          "min": "5 min",
+          "texto": "Corre con el S0 a 100 Hz y compara la distancia final de la mano al objetivo con la de 50 Hz.",
+          "pronto": "<code>python3 kit/hierarquia.py --wbc-hz 100 | grep S0</code> → <code>200 chamadas (100 Hz)</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "En un humanoide de cuerpo completo, ¿qué capa corre más rápido?",
+          "opcoes": [
+            "La de la tarea (VLA), porque decide todo lo que hace el robot.",
+            "La del PD del motor, cada 1–2 ms.",
+            "La del S0, porque coordina todas las articulaciones del cuerpo.",
+            "Todas a la misma frecuencia, para estar sincronizadas."
+          ],
+          "certa": 1,
+          "explica": "El PD corre a 500 Hz–1 kHz porque el motor necesita corregir el ángulo antes de que el cuerpo se mueva. La tarea cambia despacio; correrla a 1 kHz solo gastaría cómputo.",
+          "ref": "diagrama",
+          "cert": true
+        },
+        {
+          "p": "¿Qué es el \"WBC desacoplado\" de GR00T-WholeBodyControl?",
+          "opcoes": [
+            "Un VLA que controla las articulaciones sin ninguna capa debajo.",
+            "Un control PD que corre solo en los brazos y deja las piernas sueltas.",
+            "Una policy de RL en las piernas con IK en los brazos.",
+            "Un planificador de pasos por ZMP escrito a mano."
+          ],
+          "certa": 2,
+          "explica": "Piernas por RL (caminar, equilibrar) y brazos por IK (alcanzar): es el punto medio usado bajo GR00T N1.5/N1.6. El kit imita esa división con las piernas quietas en la pose del modelo.",
+          "ref": "passos"
+        },
+        {
+          "p": "¿Por qué hierarquia.py rechaza el S0 a 30 Hz?",
+          "opcoes": [
+            "Porque 500 no es múltiplo de 30 y cada capa corre cada N pasos.",
+            "Porque el G1 no acepta comandos de cuerpo por debajo de 50 Hz en ningún caso.",
+            "Porque 30 Hz es demasiado rápido para la IK del brazo del G1.",
+            "Porque MuJoCo 3.16 solo simula frecuencias de 50 Hz en adelante."
+          ],
+          "certa": 0,
+          "explica": "El paso de 2 ms marca el reloj; las capas de arriba son \"cada k pasos\". Con 30 Hz, k = 16,7: no existe. Los robots reales eligen divisores por la misma razón.",
+          "ref": "codigo"
+        },
+        {
+          "p": "¿Qué cambió Figure en Helix 02, según la investigación de la formación?",
+          "opcoes": [
+            "El VLA de arriba por un modelo más grande, manteniendo el resto igual en todas las capas.",
+            "Las baterías del robot, para duplicar la autonomía en campo.",
+            "El simulador de entrenamiento, que pasó a ser MuJoCo.",
+            "El whole-body control (S0) en C++ por un controlador aprendido a 1 kHz."
+          ],
+          "certa": 3,
+          "explica": "El S0 de Helix 02 es aprendido: 10M parámetros, 1 kHz, entrenado con más de 1.000 h de movimiento humano retargeted, en lugar de 109.504 líneas de C++ (27/01/2026).",
+          "ref": "passos"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Tres capas",
+          "texto": "El VLA (S2 + S1) dice qué, el S0 coordina el cuerpo, el PD mueve el motor."
+        },
+        {
+          "t": "Frecuencias",
+          "texto": "De lenta a rápida; las de arriba corren cada N pasos de la de abajo."
+        },
+        {
+          "t": "2026",
+          "texto": "El S0 se volvió una policy que rastrea movimiento humano: es el resto del curso."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "GR00T-WholeBodyControl (NVIDIA): SONIC y WBC desacoplado",
+          "href": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+          "icone": "git"
+        },
+        {
+          "t": "Helix 02 (Figure, 27/01/2026)",
+          "href": "https://www.figure.ai/news/helix-02",
+          "icone": "robo"
+        },
+        {
+          "t": "VLA v7.2, clase 2: la jerarquía vista desde arriba",
+          "href": "https://inematds.github.io/vla-v72/es/aulas/anatomia/",
+          "icone": "cerebro"
+        },
+        {
+          "t": "FTH 0, clase 6: centro de masa y polígono de apoyo",
+          "href": "https://inematds.github.io/formacao-fth-anatomia-v72/es/aulas/equilibrio/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

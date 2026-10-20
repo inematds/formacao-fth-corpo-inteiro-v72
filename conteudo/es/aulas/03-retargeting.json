@@ -1,0 +1,303 @@
+{
+  "slug": "retargeting",
+  "num": 3,
+  "menu": "Retarget",
+  "titulo": "Retargeting: del esqueleto humano al robot",
+  "titulo_curto": "Retargeting con GMR",
+  "minutos": 15,
+  "lead": "Una persona mide 1,70 m y tiene articulaciones que el robot no tiene; el G1 mide 1,32 m y, en el modelo de Menagerie, tiene 29 articulaciones con límites. El retargeting es la cuenta que lleva de uno a otro, cuadro a cuadro. En esta clase instalas GMR en un entorno propio, llevas 10 s de boxeo al G1 y verificas cada cuadro contra los límites de las articulaciones.",
+  "objetivo": "llevar un clip humano al G1 con GMR en un entorno propio y comprobar que ningún cuadro pasa del límite de las articulaciones.",
+  "competencias": [
+    "fazer-retargeting",
+    "fixar-versoes-por-ferramenta",
+    "conferir-limites-de-junta"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "Lo que resuelve el retargeting: escala, articulaciones distintas y límites"
+    },
+    {
+      "icone": "terminal",
+      "t": "Un entorno por herramienta: el .venv-gmr con versiones fijadas"
+    },
+    {
+      "icone": "alvo",
+      "t": "IK por cuadro con mink: los puntos del humano se vuelven objetivos del robot"
+    },
+    {
+      "icone": "escudo",
+      "t": "Por qué el límite depende del archivo del robot"
+    }
+  ],
+  "hero_alt": "Persona con ropa de captura con los brazos levantados junto a un robot humanoide de visor oscuro en la misma pose.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Un cuadro de retargeting",
+      "sub": "Haz clic en cada bloque. GMR repite esto para cada cuadro del clip.",
+      "nos": [
+        {
+          "icone": "usuario",
+          "titulo": "Humano",
+          "sub": "puntos del cuerpo",
+          "itens": [
+            {
+              "icone": "lista",
+              "t": "cadera, rodillas, manos…"
+            }
+          ],
+          "detalhe": "Del BVH salen la posición y la orientación de cada parte del cuerpo en el cuadro (cadera, muslos, pies, brazos, manos), ya en el referencial del mundo."
+        },
+        {
+          "icone": "grafico",
+          "titulo": "Escala",
+          "sub": "altura y extremidades",
+          "itens": [
+            {
+              "icone": "alvo",
+              "t": "0,9 en las piernas, 0,75 en los brazos"
+            }
+          ],
+          "detalhe": "El humano es más grande que el G1. La configuración de GMR para el G1 encoge cada parte por un factor (0,9 en las piernas, 0,75 en los brazos, en el archivo bvh_xsens_to_g1.json) y usa la altura real del clip."
+        },
+        {
+          "icone": "chip",
+          "titulo": "IK",
+          "sub": "mink + daqp",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "camadas",
+              "t": "dos tablas de correspondencia"
+            }
+          ],
+          "detalhe": "Cada cuerpo del robot (pelvis, muslo, mano…) recibe como objetivo el punto humano correspondiente, con pesos de posición y de orientación. mink resuelve la cinemática inversa con el solver daqp, respetando los límites de articulación del modelo de GMR."
+        },
+        {
+          "icone": "robo",
+          "titulo": "qpos del G1",
+          "sub": "36 números",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "base 7 + 29 articulaciones"
+            }
+          ],
+          "detalhe": "La salida de cada cuadro es la pose completa del robot: posición y cuaternión de la base (7) y los 29 ángulos, en el mismo orden del G1 de Menagerie. El kit guarda el cuaternión como lo usa MuJoCo (w, x, y, z)."
+        },
+        {
+          "icone": "escudo",
+          "titulo": "Límites",
+          "sub": "cuadro a cuadro",
+          "itens": [
+            {
+              "icone": "x",
+              "t": "violación = cuadro × articulación fuera"
+            }
+          ],
+          "detalhe": "Se revisa en el modelo que va a seguir el movimiento (aquí, el G1 de Menagerie). El IK respeta los límites con tolerancia numérica; el kit solo cuenta como violación lo que pasa de 0,5°."
+        }
+      ],
+      "estilo": "escada",
+      "legenda": "GMR corre en la CPU, en tiempo real según el artículo (ICRA 2026); aquí, 10 s de clip en pocos segundos."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Por qué un entorno solo para GMR",
+      "sub": "Haz clic en cada punto.",
+      "passos": [
+        {
+          "titulo": "torch",
+          "sub": "en el import",
+          "texto": [
+            "El paquete de GMR importa PyTorch apenas se carga (el modelo cinemático usa tensores), incluso para retargeting de BVH. Poner torch en el .venv de las prácticas de MuJoCo volvería el entorno pesado sin necesidad.",
+            "Solución: un .venv-gmr solo para él, con el torch de CPU del índice oficial de PyTorch."
+          ]
+        },
+        {
+          "titulo": "setup.py",
+          "sub": "× código",
+          "texto": [
+            "En el commit bb1bbe4 (02/04/2026), el setup.py pide, entre otros, proxqp, smplx y redis, pero el retargeting de BVH usa el solver daqp (predeterminado en el código) y no necesita los demás.",
+            "Cuando el código y la lista de dependencias no coinciden, vale el código: el curso instala el GMR con --no-deps y fija a mano solo lo que se ejecuta."
+          ],
+          "exemplo": {
+            "rot": "Regla de la formación",
+            "texto": "Un ambiente por herramienta y versiones fijadas por proyecto. BeyondMimic fija Isaac Lab 2.1.0; mjlab usa MuJoCo Warp con uv; en un solo ambiente, uno rompe al otro."
+          }
+        },
+        {
+          "titulo": "Límites",
+          "sub": "¿de qué archivo?",
+          "texto": [
+            "El modelo del G1 que usa el GMR (g1_mocap_29dof.xml) tiene el mismo orden de articulaciones que Menagerie, pero límites más estrechos en 15 de las 29 articulaciones (medido el 19/10/2026).",
+            "Como el retargeting respeta los límites del GMR, el resultado cabe en los de Menagerie. Lo contrario no valdría: comprueba siempre en el modelo que vas a ejecutar."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Instalar el GMR en el .venv-gmr",
+      "sub": "Agrega al clon de GMR solo el código y el modelo del G1 (sparse-checkout add), crea el segundo entorno y fija las versiones probadas. Primera vez: el entorno completo ocupó 1,2 GB en una mesa de trabajo nueva, casi todo del torch de CPU (medido el 19/10/2026).",
+      "blocos": [
+        {
+          "rot": "Terminal · ambiente del GMR",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/GMR\ngit sparse-checkout add general_motion_retargeting scripts assets/unitree_g1\ncd $F && [ -d .venv-gmr ] || python3.12 -m venv .venv-gmr\n. .venv-gmr/bin/activate\npip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.14.1\npip install -q mujoco==3.16.0 numpy==2.5.4 scipy==1.18.1 mink==1.3.0 qpsolvers==4.13.0 daqp==0.10.3 rich tqdm loop_rate_limiters imageio\npip install -q --no-deps -e GMR\npython3 -c \"from importlib.metadata import version as v; print(*[f'{p} {v(p)}' for p in ('torch', 'mink', 'mujoco', 'general_motion_retargeting')], sep=' · ')\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>torch 2.14.1+cpu · mink 1.3.0 · mujoco 3.16.0 · general_motion_retargeting 0.2.0</pre><p>Una línea con las cuatro versiones. El GMR instalado en modo editable apunta a la carpeta ~/fth/GMR.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "10 s de boxeo en el G1",
+      "sub": "El retarget.py lee el BVH como lo hace el script del GMR para Xsens (sin su interfaz gráfica), llama al GMR cuadro a cuadro y comprueba cada cuadro contra los límites del G1 de Menagerie.",
+      "blocos": [
+        {
+          "rot": "Terminal · retargeting",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv-gmr/bin/activate\npython3 kit/retarget.py $F/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh --fim 1200 --nome boxe_g1; echo \"saída: $?\""
+        },
+        {
+          "rot": "Fragmento · kit/retarget.py",
+          "icone": "arquivo",
+          "conteudo": "    folga = np.deg2rad(FOLGA_GRAUS)\n    fora = (q < lo - folga) | (q > hi + folga)"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>clipe: 251021_04_boxing_120Hz_cm_3DsMax.bvh · 1200 quadros a 120 Hz (10.0 s) · 28 pontos do esqueleto\naltura do humano no clipe: 1.67 m · robô: unitree_g1 (GMR, config bvh_xsens_to_g1.json)\nqpos: 1200 × 36 (base 7 + 29 juntas, mesma ordem do Menagerie)\nmenor margem até o limite: right_ankle_roll_joint (0.0°, 0 = encostado)\nviolações de limite (Menagerie, folga 0.5°): 0\ntempo de retargeting: menos de 1 min em CPU\ngravado: ~/fth/movimentos/boxe_g1.npz\nsaída: 0</pre><p>1200 cuadros, ninguna violación. El menor margen es el tobillo pegado al límite: un pie plano en el suelo lleva el tobillo al final del recorrido.</p>"
+          },
+          {
+            "rot": "Error común: ambiente equivocado",
+            "html": "<pre>ERRO: o GMR não está neste ambiente (No module named 'general_motion_retargeting'). Ative ~/fth/.venv-gmr (aula 3).\nsaída: 2</pre><p>Se ejecutó con el .venv de MuJoCo activo. El GMR solo existe en el .venv-gmr: actívalo (<code>. ~/fth/.venv-gmr/bin/activate</code>) y ejecuta de nuevo.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Instalar, hacer retargeting, comprobar.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Ambiente del GMR",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque de instalación y confirma las versiones.",
+          "pronto": "<code>~/fth/.venv-gmr/bin/python -c \"import general_motion_retargeting\" 2>/dev/null; echo \"saída: $?\"</code> → <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Retargeting sin violación",
+          "min": "5 min",
+          "texto": "Ejecuta el retargeting de los 10 s de boxeo.",
+          "pronto": "<code>python3 kit/retarget.py ~/fth/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh --fim 1200 --nome boxe_g1</code> → <code>violações de limite (Menagerie, folga 0.5°): 0</code> y <code>saída: 0</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Otro tramo",
+          "min": "5 min",
+          "texto": "Haz retargeting del cuadro 1200 al 2400 con --inicio 1200 --fim 2400 --nome boxe_trecho2 y compara el menor margen con el del primer tramo.",
+          "pronto": "<code>ls ~/fth/movimentos/boxe_trecho2.npz</code> → el archivo existe, y la salida del retarget termina en <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "¿Por qué el curso instala el GMR con --no-deps?",
+          "opcoes": [
+            "Porque PyPI no tiene ninguna de las dependencias del GMR para máquinas aarch64.",
+            "Porque el GMR no tiene dependencias y pip se quejaría del setup.py.",
+            "Porque --no-deps hace el retargeting más rápido en la CPU del alumno.",
+            "Porque el setup.py pide paquetes que el retargeting de BVH no usa."
+          ],
+          "certa": 3,
+          "explica": "El código usa el solver daqp; proxqp, smplx y redis quedan fuera. Fijar a mano solo lo que se ejecuta deja el ambiente más pequeño y reproducible.",
+          "ref": "passos",
+          "cert": true
+        },
+        {
+          "p": "El retargeting dio 0 violaciones en los límites de Menagerie. ¿Por qué eso no es suerte?",
+          "opcoes": [
+            "Porque el boxeo es un movimiento lento que no se acerca a los límites.",
+            "Porque el modelo del GMR tiene límites iguales o más estrechos que los de Menagerie.",
+            "Porque el kit recorta solo, sin avisar, los ángulos que pasan del límite antes de contarlos.",
+            "Porque el G1 de Menagerie no declara límites de articulación en ninguna articulación."
+          ],
+          "certa": 1,
+          "explica": "En 15 de las 29 articulaciones el modelo del GMR es más restrictivo, y el IK respeta esos límites. En una dirección la garantía vale; en la otra, no. El tobillo se pega al límite, así que el movimiento no está \"lejos de los límites\".",
+          "ref": "passos"
+        },
+        {
+          "p": "El qpos de cada fotograma tiene 36 números. ¿Qué son los 7 primeros?",
+          "opcoes": [
+            "Posición (x, y, z) y cuaternión de la base, en el formato w, x, y, z.",
+            "Los ángulos de las siete articulaciones de la pierna izquierda del robot.",
+            "Velocidades de la base, que MuJoCo guarda junto con las posiciones.",
+            "La altura del humano, el fps y otros metadatos del clip."
+          ],
+          "certa": 0,
+          "explica": "La base flotante tiene 3 de posición + 4 del cuaternión; el kit mantiene w, x, y, z como lo usa MuJoCo (el script de ejemplo de GMR guarda x, y, z, w en el pickle).",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "IK por fotograma",
+          "texto": "Escala al humano y resuelve la pose del robot fotograma a fotograma."
+        },
+        {
+          "t": "Entorno",
+          "texto": "Un venv por herramienta, versiones fijadas, dependencias a través del código."
+        },
+        {
+          "t": "Límites",
+          "texto": "Verifica en el modelo que va a ejecutar, no en el que lo generó."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "GMR: General Motion Retargeting",
+          "href": "https://github.com/YanjieZe/GMR",
+          "icone": "git"
+        },
+        {
+          "t": "mink: cinemática inversa sobre MuJoCo",
+          "href": "https://github.com/kevinzakka/mink",
+          "icone": "git"
+        },
+        {
+          "t": "FTH 0, clase 3: articulaciones y límites del G1",
+          "href": "https://inematds.github.io/formacao-fth-anatomia-v72/es/aulas/juntas/",
+          "icone": "robo"
+        }
+      ]
+    }
+  ]
+}

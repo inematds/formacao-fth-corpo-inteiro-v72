@@ -1,6 +1,6 @@
 ok    · limites de junta: 0 quadro×junta fora
 ok    · velocidade de junta: máx 313°/s em left_elbow_joint (teto 400°/s)
-ok    · pés acima do chão: site do pé desce até 3.8 cm (de pé: 3.3 cm)
+ok    · pé não afunda no chão: site do pé desce até 3.8 cm (de pé: 3.3 cm)
 ok    · área de trabalho: pelve se afasta até 0.22 m (raio 1.5 m)
 segurança: 4/4 regras
 saída: 0

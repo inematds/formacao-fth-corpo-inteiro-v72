@@ -5,7 +5,7 @@
   "titulo": "Uma política que imita qualquer movimento",
   "titulo_curto": "Rastreio de movimento",
   "minutos": 15,
-  "lead": "Ter o movimento no formato do robô não é fazer o robô executá-lo. Se você só mandar os ângulos para os motores, ele imita por um segundo e cai: ninguém está cuidando do equilíbrio. Nesta aula você reproduz o boxe no MuJoCo com a pelve presa a um pórtico e sem ele, mede o erro de cada junta e vê o que BeyondMimic, GMT e SONIC resolvem.",
+  "lead": "Ter o movimento no formato do robô não é fazê-lo executar. Mandando só os ângulos para os motores, ele imita por um segundo e cai: ninguém cuida do equilíbrio. Nesta aula você reproduz o boxe no MuJoCo com e sem pórtico, mede o erro de cada junta e vê o que BeyondMimic, GMT e SONIC resolvem.",
   "objetivo": "reproduzir o movimento no MuJoCo com e sem pórtico e explicar por que é preciso uma política de rastreio.",
   "competencias": [
     "reproduzir-movimento-em-simulacao",

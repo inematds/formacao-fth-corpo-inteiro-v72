@@ -5,7 +5,7 @@
   "titulo": "Movimento humano como dado",
   "titulo_curto": "Movimento humano como dado",
   "minutos": 15,
-  "lead": "As políticas de corpo inteiro de 2026 aprendem com horas de movimento humano. Antes de treinar ou imitar qualquer coisa, você precisa saber ler esse dado e saber se pode usá-lo. Nesta aula você abre um clipe de captura de movimento em BVH, conta quadros, fps e juntas, escreve um clipe seu e entende por que o curso não redistribui nenhuma base pública.",
+  "lead": "As políticas de corpo inteiro de 2026 aprendem com horas de movimento humano. Antes de usar esse dado, você precisa saber lê-lo e saber se pode usá-lo. Nesta aula você abre um clipe BVH, conta quadros, fps e juntas, escreve um clipe seu e entende por que o curso não redistribui nenhuma base pública.",
   "objetivo": "ler um clipe de captura de movimento (BVH) e dizer quadros, fps e juntas, sabendo de onde o dado vem e sob que licença.",
   "competencias": [
     "ler-bvh",
@@ -131,7 +131,7 @@
     {
       "tipo": "codigo",
       "titulo": "Baixar só o clipe de teste do GMR e lê-lo",
-      "sub": "O repositório do GMR tem 1,2 GB por causa das malhas de 17 robôs. O sparse-checkout baixa só a pasta do clipe (cerca de 3 MB). O ler_clipe.py não usa biblioteca extra: lê o texto do BVH.",
+      "sub": "O repositório do GMR tem 1,2 GB na pasta assets, por causa das malhas dos robôs. O sparse-checkout baixa só a pasta do clipe, 2,9 MB (medidos em 19/10/2026, commit bb1bbe4). O ler_clipe.py não usa biblioteca extra: lê o texto do BVH.",
       "blocos": [
         {
           "rot": "Terminal · clipe do GMR",
@@ -154,6 +154,10 @@
           {
             "rot": "Erro comum: clipe cortado",
             "html": "<pre>arquivo: cortado.bvh\nraiz: Hips · juntas: 23 · pontas (End Site): 5 · canais por quadro: 72\nordem de rotação: Yrotation Xrotation Zrotation · unidade provável: cm (maior OFFSET 43.3)\nquadros: 4249 · fps: 120 · duração: 35.4 s\nlinhas de movimento conferidas: 4000/4249\nsaída: 1</pre><p>O cabeçalho promete 4249 quadros e o arquivo só tem 4000 linhas (download interrompido, cópia parcial). O script sai com código 1 em vez de deixar o retargeting rodar com o fim faltando.</p>"
+          },
+          {
+            "rot": "E2: 90 quadros",
+            "html": "<pre>gravado: ~/fth/movimentos/aceno.bvh (90 quadros a 30 Hz)\nquadros: 90 · fps: 30 · duração: 3.0 s</pre><p>90 quadros a 30 Hz = 3 s.</p>"
           }
         ]
       }

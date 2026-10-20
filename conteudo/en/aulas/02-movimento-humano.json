@@ -1,0 +1,298 @@
+{
+  "slug": "movimento-humano",
+  "num": 2,
+  "menu": "Mocap",
+  "titulo": "Human motion as data",
+  "titulo_curto": "Human motion as data",
+  "minutos": 15,
+  "lead": "2026 whole-body policies learn from hours of human motion. Before using that data, you need to know how to read it and whether you are allowed to use it. In this lesson you open a BVH clip, count frames, fps and joints, write a clip of your own, and understand why the course does not redistribute any public dataset.",
+  "objetivo": "read a motion capture clip (BVH) and report frames, fps and joints, knowing where the data comes from and under what license.",
+  "competencias": [
+    "ler-bvh",
+    "avaliar-licenca-de-dados",
+    "conferir-integridade-de-clipe"
+  ],
+  "aprende": [
+    {
+      "icone": "video",
+      "t": "Where human motion comes from: mocap, video and VR"
+    },
+    {
+      "icone": "arquivo",
+      "t": "The BVH format inside: a skeleton and one line per frame"
+    },
+    {
+      "icone": "cadeado",
+      "t": "AMASS, LAFAN1 and the license question"
+    },
+    {
+      "icone": "lupa",
+      "t": "How to catch a truncated clip before it ruins the retargeting"
+    }
+  ],
+  "hero_alt": "Person in a black motion capture suit with reflective markers in a boxing pose, surrounded by cameras in a dark studio.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "From a person's movement to a file",
+      "sub": "Click each block.",
+      "nos": [
+        {
+          "icone": "usuario",
+          "titulo": "Capture",
+          "sub": "mocap, VR, video",
+          "itens": [
+            {
+              "icone": "video",
+              "t": "cameras and markers"
+            },
+            {
+              "icone": "chip",
+              "t": "inertial suit (Xsens)"
+            }
+          ],
+          "detalhe": "Three sources: an optical studio (cameras and markers), a suit with inertial sensors and, more and more, ordinary video or the operator's VR headset. SONIC was trained on more than 100 million frames (about 700 h) of human motion."
+        },
+        {
+          "icone": "arquivo",
+          "titulo": "Format",
+          "sub": "BVH, SMPL-X, FBX",
+          "itens": [
+            {
+              "icone": "lista",
+              "t": "skeleton + frames"
+            }
+          ],
+          "detalhe": "BVH stores a skeleton (joints and the length of each bone) and, for each frame, the angles of each joint. SMPL-X is a parametric body model used by AMASS. GMR reads SMPL-X, BVH (LAFAN1, Nokov, Xsens), FBX and the PICO stream."
+        },
+        {
+          "icone": "cadeado",
+          "titulo": "License",
+          "sub": "can you use it?",
+          "forte": true,
+          "itens": [
+            {
+              "icone": "escudo",
+              "t": "research × open × commercial"
+            }
+          ],
+          "detalhe": "AMASS requires registration. The license terms of AMASS and LAFAN1 for an open course were not confirmed by the training's research (10/19/2026). That is why this course does not redistribute any data: it uses the test clip that GMR itself publishes in its repository and a synthetic clip made by the kit."
+        },
+        {
+          "icone": "check",
+          "titulo": "Clip",
+          "sub": "checked",
+          "itens": [
+            {
+              "icone": "grafico",
+              "t": "frames, fps, joints"
+            }
+          ],
+          "detalhe": "Before retargeting: does the frame count in the header match the lines? Is the fps what you think it is? Is the unit centimeters or meters? A clip that is cut off or in another unit produces a crooked robot with no error on screen."
+        }
+      ],
+      "legenda": "Motion data is training input: license and integrity come before quantity."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "The datasets you will run into",
+      "sub": "Click each one.",
+      "passos": [
+        {
+          "titulo": "AMASS",
+          "sub": "SMPL-X",
+          "texto": [
+            "A collection of many captures converted to the same parametric body (SMPL-X). It is the most common input for GMR and for several motion tracking works.",
+            "Requires registration on the site. The terms for an open course were not checked: read them before using it and before publishing anything derived from it."
+          ]
+        },
+        {
+          "titulo": "LAFAN1",
+          "sub": "BVH",
+          "texto": [
+            "An animation dataset in BVH used in many retargeting examples (GMR has a ready-made configuration for it).",
+            "Same license caveat: not confirmed by the training's research on 10/19/2026."
+          ]
+        },
+        {
+          "titulo": "Your data",
+          "sub": "your license",
+          "texto": [
+            "The cleanest path for a course, a product or an article: capture your own motion (inertial suit, cameras, VR) or generate a synthetic clip.",
+            "The kit's bvh_minimo.py writes a BVH from scratch: a 5-joint skeleton and a wave. It is not a real human, but it shows the format and the license is yours."
+          ],
+          "exemplo": {
+            "rot": "Reported",
+            "texto": "The README of GR00T-WholeBodyControl cites the BONES-SEED dataset (03/16/2026, more than 142 thousand motions, about 288 h, with G1 trajectories in MuJoCo). The license was not checked: read it before using it."
+          }
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Download only the GMR test clip and read it",
+      "sub": "The GMR repository has 1.2 GB in the assets folder, because of the robot meshes. The sparse-checkout downloads only the clip's folder, 2.9 MB (measured on 10/19/2026, commit bb1bbe4). ler_clipe.py uses no extra library: it reads the BVH text.",
+      "blocos": [
+        {
+          "rot": "Terminal · GMR clip",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F\n[ -d GMR ] || git clone -q --filter=blob:none --sparse https://github.com/YanjieZe/GMR\ncd GMR && git sparse-checkout set assets/xsens_bvh_test\ngit checkout -q bb1bbe4 && git log -1 --format='GMR %h (%ad)' --date=short\ncd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/ler_clipe.py $F/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh; echo \"saída: $?\""
+        },
+        {
+          "rot": "BVH excerpt (header of the GMR test clip)",
+          "icone": "arquivo",
+          "conteudo": "HIERARCHY\nROOT Hips\n{\n OFFSET 0.000000 0.000000 0.000000\n CHANNELS 6 Xposition Yposition Zposition Yrotation Xrotation Zrotation\n JOINT Chest\n {\n  OFFSET 0.000000 10.149404 -1.127712\n  CHANNELS 3 Yrotation Xrotation Zrotation\n(…)\nMOTION\nFrames: 4249\nFrame Time: 0.008333"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>GMR bb1bbe4 (2026-04-02)\narquivo: 251021_04_boxing_120Hz_cm_3DsMax.bvh\nraiz: Hips · juntas: 23 · pontas (End Site): 5 · canais por quadro: 72\nordem de rotação: Yrotation Xrotation Zrotation · unidade provável: cm (maior OFFSET 43.3)\nquadros: 4249 · fps: 120 · duração: 35.4 s\nlinhas de movimento conferidas: 4249/4249\nsaída: 0</pre><p>23 joints with 3 rotation channels, plus 3 extra position channels on the root: 72 numbers per frame. Frame Time of 0.008333 s = 120 frames per second.</p>"
+          },
+          {
+            "rot": "Common error: a truncated clip",
+            "html": "<pre>arquivo: cortado.bvh\nraiz: Hips · juntas: 23 · pontas (End Site): 5 · canais por quadro: 72\nordem de rotação: Yrotation Xrotation Zrotation · unidade provável: cm (maior OFFSET 43.3)\nquadros: 4249 · fps: 120 · duração: 35.4 s\nlinhas de movimento conferidas: 4000/4249\nsaída: 1</pre><p>The header promises 4249 frames and the file has only 4000 lines (interrupted download, partial copy). The script exits with code 1 instead of letting retargeting run with the end missing.</p>"
+          },
+          {
+            "rot": "E2: 90 frames",
+            "html": "<pre>gravado: ~/fth/movimentos/aceno.bvh (90 quadros a 30 Hz)\nquadros: 90 · fps: 30 · duração: 3.0 s</pre><p>90 frames at 30 Hz = 3 s.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "A BVH of your own, made from scratch",
+      "sub": "Five joints (hips, spine, head, right arm and right forearm), 60 frames at 30 Hz: the arm rises in 0.5 s and the forearm waves.",
+      "blocos": [
+        {
+          "rot": "Terminal · generate and read aceno.bvh",
+          "icone": "terminal",
+          "conteudo": "F=${FTH:-$HOME/fth}; cd $F/corpo-inteiro && . $F/.venv/bin/activate\npython3 kit/bvh_minimo.py && python3 kit/ler_clipe.py $F/movimentos/aceno.bvh; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>gravado: ~/fth/movimentos/aceno.bvh (60 quadros a 30 Hz)\narquivo: aceno.bvh\nraiz: Hips · juntas: 5 · pontas (End Site): 2 · canais por quadro: 18\nordem de rotação: Zrotation Xrotation Yrotation · unidade provável: cm (maior OFFSET 30.0)\nquadros: 60 · fps: 30 · duração: 2.0 s\nlinhas de movimento conferidas: 60/60\nsaída: 0</pre><p>3 channels per joint + 3 for the root position = 18. The same reading works for any BVH.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "Read it, check it, and decide whether you can use it.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Read the GMR clip",
+          "min": "5 min",
+          "texto": "Run the clip block and note the frames, fps and duration.",
+          "pronto": "<code>python3 kit/ler_clipe.py ~/fth/GMR/assets/xsens_bvh_test/251021_04_boxing_120Hz_cm_3DsMax.bvh | tail -1</code> → <code>linhas de movimento conferidas: 4249/4249</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Your slower wave",
+          "min": "5 min",
+          "texto": "Generate the wave with 90 frames at 30 Hz and read it again.",
+          "pronto": "<code>python3 kit/bvh_minimo.py --quadros 90 && python3 kit/ler_clipe.py ~/fth/movimentos/aceno.bvh | grep quadros</code> → <code>quadros: 90 · fps: 30 · duração: 3.0 s</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · License sheet",
+          "min": "10 min",
+          "texto": "For a clip you want to use (AMASS, LAFAN1 or another), write three lines in ~/fth/movimentos/licenca.md: Fonte, Licença (with the link) and Pode redistribuir.",
+          "pronto": "<code>grep -c -E \"^(Fonte|Licença|Pode redistribuir):\" ~/fth/movimentos/licenca.md</code> → <code>3</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after your answer.",
+      "perguntas": [
+        {
+          "p": "The header says Frames: 4249 and Frame Time: 0.008333. How long is the clip?",
+          "opcoes": [
+            "4.2 s, because each frame lasts about 1 ms.",
+            "35.4 s, at 120 frames per second.",
+            "71 min, counting 1 s per frame.",
+            "You can't tell without opening the clip in a 3D viewer."
+          ],
+          "certa": 1,
+          "explica": "1 / 0.008333 = 120 Hz; 4249 / 120 = 35.4 s. The common mistake is reading Frame Time as fps.",
+          "ref": "codigo",
+          "cert": true
+        },
+        {
+          "p": "Why doesn't this course copy AMASS or LAFAN1 clips into the repository?",
+          "opcoes": [
+            "Because they are old datasets that no 2026 project uses anymore.",
+            "Because GMR reads none of them and only accepts the FBX format.",
+            "Because the license terms for an open course have not been confirmed.",
+            "Because the files are too big for GitHub Pages to serve."
+          ],
+          "certa": 2,
+          "explica": "AMASS requires sign-up, and the terms for AMASS and LAFAN1 were not confirmed on Oct 19, 2026. Without a clear license, the course uses the clip that GMR publishes and a synthetic clip of its own. GMR reads both datasets.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "ler_clipe.py says 4000/4249 lines checked. What do you do?",
+          "opcoes": [
+            "Download the clip again before retargeting: the file is truncated.",
+            "Move on to retargeting, which fills in the missing frames on its own.",
+            "Change the header fps to 113 Hz so the duration matches the lines.",
+            "Ignore the difference, because 249 fewer frames change nothing."
+          ],
+          "certa": 0,
+          "explica": "The header promises 4249 frames and there are only 4000. Retargeting doesn't know that, and the end of the motion vanishes without a warning. Integrity first.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "Format",
+          "texto": "BVH = skeleton + one frame per line; frames, fps and channels come from the text."
+        },
+        {
+          "t": "License",
+          "texto": "Without clear terms, don't redistribute: use your own data or data that ships with a license."
+        },
+        {
+          "t": "Integrity",
+          "texto": "Check frames × lines before any retargeting."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Going further",
+      "links": [
+        {
+          "t": "GMR: General Motion Retargeting (repository)",
+          "href": "https://github.com/YanjieZe/GMR",
+          "icone": "git"
+        },
+        {
+          "t": "GMR: paper (arXiv 2510.02252)",
+          "href": "https://arxiv.org/abs/2510.02252",
+          "icone": "arquivo"
+        },
+        {
+          "t": "SONIC: model and card (Hugging Face)",
+          "href": "https://huggingface.co/nvidia/GEAR-SONIC",
+          "icone": "cerebro"
+        }
+      ]
+    }
+  ]
+}

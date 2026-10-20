@@ -5,7 +5,7 @@
   "titulo": "Projeto: um movimento seguro de ponta a ponta",
   "titulo_curto": "Projeto de ponta a ponta",
   "minutos": 15,
-  "lead": "Cada aula deixou uma peça: o clipe lido, o retargeting sem violação, o rastreio medido, a checagem. Separadas, provam pouco; o que vai para um robô é a cadeia inteira, aplicada a um só movimento. Nesta aula você roda as quatro etapas em sequência, confere que todas passam e que falam do mesmo arquivo, e gera o seu plano de estudo.",
+  "lead": "Cada aula deixou uma peça: clipe lido, retargeting sem violação, rastreio medido, checagem. O que vai para um robô é a cadeia inteira, num só movimento. Nesta aula você roda as quatro etapas em sequência, confere que todas passam e falam do mesmo arquivo, e gera o seu plano de estudo.",
   "objetivo": "rodar a cadeia mocap → retargeting → rastreio → segurança num só movimento e provar que as quatro etapas passam.",
   "competencias": [
     "encadear-pipeline-de-movimento",
@@ -106,7 +106,11 @@
         "abas": [
           {
             "rot": "Saída capturada (19/10/2026)",
-            "html": "<pre>ok    · limites de junta: 0 quadro×junta fora\nok    · velocidade de junta: máx 313°/s em left_elbow_joint (teto 400°/s)\nok    · pés acima do chão: site do pé desce até 3.8 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.22 m (raio 1.5 m)\nsegurança: 4/4 regras\nsaída: 0</pre><p>O cotovelo esquerdo chega a 313°/s num soco. Com um teto de 150°/s (por exemplo, para o primeiro teste perto de pessoas), a mesma regra reprova o movimento: <code>--teto-graus-s 150</code> dá <code>segurança: 3/4 regras</code>.</p>"
+            "html": "<pre>ok    · limites de junta: 0 quadro×junta fora\nok    · velocidade de junta: máx 313°/s em left_elbow_joint (teto 400°/s)\nok    · pé não afunda no chão: site do pé desce até 3.8 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.22 m (raio 1.5 m)\nsegurança: 4/4 regras\nsaída: 0</pre><p>O cotovelo esquerdo chega a 313°/s num soco. Com um teto de 150°/s (por exemplo, para o primeiro teste perto de pessoas), a mesma regra reprova o movimento: <code>--teto-graus-s 150</code> dá <code>segurança: 3/4 regras</code>.</p>"
+          },
+          {
+            "rot": "Teto de 150°/s",
+            "html": "<pre>segurança: 3/4 regras</pre><p>Com o teto do primeiro teste perto de pessoas, o boxe reprova na velocidade.</p>"
           }
         ]
       }
@@ -135,7 +139,7 @@
           },
           {
             "rot": "Outro trecho: reprovado",
-            "html": "<pre>violações de limite (Menagerie, folga 0.5°): 0\nerro médio de junta: 1.5° · pior junta: right_ankle_pitch_joint (5.1°)\nok    · limites de junta: 0 quadro×junta fora\nFALHA · velocidade de junta: máx 635°/s em left_knee_joint (teto 400°/s)\nFALHA · pés acima do chão: site do pé desce até 1.4 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.05 m (raio 1.5 m)\nsegurança: 2/4 regras\ncadeia: um só movimento (boxe_trecho2.npz)\n3 de 4 etapas ok</pre><p>Os quadros de 1200 a 2400 passam no retargeting e no rastreio, mas o joelho chega a 635°/s e o pé desce 1,9 cm abaixo da pose de pé (o retargeting não impõe o contato com o chão). A cadeia fecha num só arquivo e reprova: é o resultado certo.</p>"
+            "html": "<pre>violações de limite (Menagerie, folga 0.5°): 0\nerro médio de junta: 1.5° · pior junta: right_ankle_pitch_joint (5.1°)\nok    · limites de junta: 0 quadro×junta fora\nFALHA · velocidade de junta: máx 635°/s em left_knee_joint (teto 400°/s)\nFALHA · pé não afunda no chão: site do pé desce até 1.4 cm (de pé: 3.3 cm)\nok    · área de trabalho: pelve se afasta até 0.05 m (raio 1.5 m)\nsegurança: 2/4 regras\ncadeia: um só movimento (boxe_trecho2.npz)\n3 de 4 etapas ok</pre><p>Os quadros de 1200 a 2400 passam no retargeting e no rastreio, mas o joelho chega a 635°/s e o pé desce 1,9 cm abaixo da pose de pé (o retargeting não impõe o contato com o chão). A cadeia fecha num só arquivo e reprova: é o resultado certo.</p>"
           }
         ]
       }

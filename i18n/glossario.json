@@ -1,0 +1,26 @@
+{
+  "en": {
+    "REGRA: tudo dentro de <pre> e de <code> é saída ou comando real do kit (em português) e fica IGUAL, sem traduzir": "RULE: everything inside <pre> and <code> is real kit output or command (in Portuguese) and stays EXACTLY as is, untranslated (e.g. executado: sim, alvos atingidos: 5/6, violações de limite, erro médio de junta, queda: não, 4 etapas ok, segurança: 4/4 regras, dedos tocando o objeto, 3 camadas, saída: 0, linhas de movimento conferidas)",
+    "nomes de arquivos, pastas, juntas, chaves de JSON/YAML e opções de linha de comando": "never translate (file, folder, joint names, JSON keys and values, command-line options): kit/ fth.py hierarquia.py ler_clipe.py bvh_minimo.py retarget.py reproduzir.py teleop_sim.py mao.py comando_wbc.py checar_seguranca.py conferir_pipeline.py capturar.sh passos.json comandos.json comandos-ruins.json meus-comandos.json passos-meu.json licenca.md aceno.bvh boxe_g1.npz boxe_trecho2.npz ~/fth movimentos etapas corpo-inteiro mujoco_menagerie GMR .venv .venv-gmr unitree_g1 leap_hand shadow_hand wonik_allegro scene.xml scene_with_hands.xml g1_mocap_29dof.xml bvh_xsens_to_g1.json stand qpos ctrl nq nu kp actuatorfrcrange jnt_range acao alcancar girar_tronco voltar mao direita esquerda alvo_m graus dx dy dz janela tolerancia_cm alvos comandos t --modo portico livre --roteiro --latencia-ms --comandos --teto-graus-s --raio-m --inicio --fim --nome --so-contar --modelo --s1-hz --s2-hz Hips Chest HIERARCHY MOTION Frames Frame Time OFFSET CHANNELS End Site right_wrist_yaw_link left_knee_joint right_ankle_roll_joint right_shoulder_roll_joint left_elbow_joint waist_yaw_joint right_hand_* Fonte Licença Pode redistribuir",
+    "termos técnicos que ficam em inglês": "keep in English as is: sim-to-real, real-to-sim, sim2sim, domain randomization, actuator network, whole-body control, motion tracking, retargeting, teleoperation, teleop, policy, reward, checkpoint, MJCF, URDF, DDS, BVH, SMPL-X, FBX, mocap, keyframe, sparse-checkout, venv, IK, PD, WBC, VLA, VR, MjModel, MjData, MjSpec, mj_step, S0, S1, S2, GMR, mink, daqp, SONIC, BeyondMimic, GMT, HOVER, TWIST2, GR00T, Helix, mjlab, WandB",
+    "pronto quando": "done when",
+    "pórtico (virtual)": "gantry (virtual)",
+    "relatado": "reported",
+    "graus de liberdade": "degrees of freedom",
+    "captura de movimento": "motion capture",
+    "rastreio de movimento": "motion tracking",
+    "controle de corpo inteiro": "whole-body control"
+  },
+  "es": {
+    "REGRA: tudo dentro de <pre> e de <code> é saída ou comando real do kit (em português) e fica IGUAL, sem traduzir": "REGLA: todo lo que está dentro de <pre> y de <code> es salida o comando real del kit (en portugués) y queda IGUAL, sin traducir (p. ej. executado: sim, alvos atingidos: 5/6, violações de limite, erro médio de junta, queda: não, 4 etapas ok, segurança: 4/4 regras, dedos tocando o objeto, 3 camadas, saída: 0, linhas de movimento conferidas)",
+    "nomes de arquivos, pastas, juntas, chaves de JSON/YAML e opções de linha de comando": "nunca traducir (nombres de archivos, carpetas, articulaciones, claves y valores JSON, opciones de línea de comandos): kit/ fth.py hierarquia.py ler_clipe.py bvh_minimo.py retarget.py reproduzir.py teleop_sim.py mao.py comando_wbc.py checar_seguranca.py conferir_pipeline.py capturar.sh passos.json comandos.json comandos-ruins.json meus-comandos.json passos-meu.json licenca.md aceno.bvh boxe_g1.npz boxe_trecho2.npz ~/fth movimentos etapas corpo-inteiro mujoco_menagerie GMR .venv .venv-gmr unitree_g1 leap_hand shadow_hand wonik_allegro scene.xml scene_with_hands.xml g1_mocap_29dof.xml bvh_xsens_to_g1.json stand qpos ctrl nq nu kp actuatorfrcrange jnt_range acao alcancar girar_tronco voltar mao direita esquerda alvo_m graus dx dy dz janela tolerancia_cm alvos comandos t --modo portico livre --roteiro --latencia-ms --comandos --teto-graus-s --raio-m --inicio --fim --nome --so-contar --modelo --s1-hz --s2-hz Hips Chest HIERARCHY MOTION Frames Frame Time OFFSET CHANNELS End Site right_wrist_yaw_link left_knee_joint right_ankle_roll_joint right_shoulder_roll_joint left_elbow_joint waist_yaw_joint right_hand_* Fonte Licença Pode redistribuir",
+    "termos técnicos que ficam em inglês": "mantener en inglés tal cual: sim-to-real, real-to-sim, sim2sim, domain randomization, actuator network, whole-body control, motion tracking, retargeting, teleoperation, teleop, policy, reward, checkpoint, MJCF, URDF, DDS, BVH, SMPL-X, FBX, mocap, keyframe, sparse-checkout, venv, IK, PD, WBC, VLA, VR, MjModel, MjData, MjSpec, mj_step, S0, S1, S2, GMR, mink, daqp, SONIC, BeyondMimic, GMT, HOVER, TWIST2, GR00T, Helix, mjlab, WandB",
+    "pronto quando": "listo cuando",
+    "pórtico (virtual)": "pórtico (virtual)",
+    "relatado": "reportado",
+    "graus de liberdade": "grados de libertad",
+    "captura de movimento": "captura de movimiento",
+    "rastreio de movimento": "motion tracking",
+    "controle de corpo inteiro": "whole-body control"
+  }
+}
